@@ -1,22 +1,53 @@
-tosca_definitions_version: tosca_simple_yaml_1_2
+tosca_definitions_version: tosca_simple_yaml_1_0
 #This version is not yet valid as slide 17 has not yet introduced values for the mandatory type field
+
+TMForumInformationModel:
+  PhysicalResourceSpecAttributes: &PhysicalResourceSpecAttributes
+    vendorName:
+      type: string
+    partNumber:
+      type: string
 
 description: Template for physical router within a tosca node.network
 topology_template:
   node_templates:
     my_port:
       type: # Not yet defined
-      capabilities:
+      # capabilities:
           # linkable is inherited  
       requirements:
         - binding: my_router_software
+        - host: port_card
 
     router_software:
       type: # Not yet defined
-      capabilities:
+      # capabilities:
           # bindable is inherited
       requirements:
         - host: my_processor_card
     
+    processor_card:
+      type: # Not yet defined
+      attributes: *PhysicalResourceSpecAttributes
+      requirements:
+        - host: slot
 
+    port_card:
+      type: # Not yet defined
+      attributes: *PhysicalResourceSpecAttributes
+      requirements:
+        - host: slot
+
+    slot:
+      type: # Not yet defined
+      requirements:
+        - host: chassis
+
+    chassis:
+      type: # Not yet defined
+      attributes:
+        vendorName:
+          type: string
+        partNumber:
+          type: string      
 
