@@ -4,14 +4,14 @@ tosca_definitions_version: tosca_simple_yaml_1_2
 description: Template for physical router within a tosca node.network
 topology_template:
   node_templates:
-    port:
+    my_port:
       type: # Not yet defined
       capabilities:
           # linkable is inherited  
       requirements:
-        - binding: router_software
+        - binding: my_router_software
 
-    router_software:
+    my_router_software:
       type: # Not yet defined
       capabilities:
           # bindable is inherited 
