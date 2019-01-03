@@ -1,6 +1,6 @@
 
 tosca_definitions_version: tosca_simple_yaml_1_0
-#This version is not yet valid as slide 18 has not yet introduced values for the mandatory type field
+#This version is not yet valid as slide 18 has not yet introduced values for the mandatory type field for some nodes
 
 dsl_definitions:
 # Create a yaml alias for parts of the TMForum Information Model which are frequently reused 
@@ -23,7 +23,7 @@ topology_template:
         - host: port_card
 
     router_software:
-      type: # Not yet defined
+      type: tosca.nodes.SoftwareComponent
       # capabilities:
           # bindable is inherited
       requirements:
