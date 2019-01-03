@@ -15,9 +15,14 @@ dsl_definitions:
 node_types:
   tosca.nodes.Root.PhysicalResourceHardware:
     derived_from: tosca.nodes.Root
+  
 
   tosca.nodes.Root.PhysicalResourceHardware.PhysicalPort:
     derived_from: tosca.nodes.Root.PhysicalResourceHardware
+    capabilities:
+      link:
+        type: tosca.capabilities.network.Linkable
+
 
 
 description: Template for physical router within a tosca node.network
@@ -27,26 +32,38 @@ topology_template:
     my_port:
       type: tosca.nodes.Root.PhysicalResourceHardware.PhysicalPort
       # capabilities:
-          # linkable is inherited  
+          # linkable is inherited
       requirements:
-        - binding: router_software
-        - host: port_card
-
+        - binding: 
+            node: router_software
+        - host: 
+            capability: tosca.capabilities.?
+            node: port_card
+            relationship: HostedOn
+            
     router_software:
       type: tosca.nodes.SoftwareComponent
       # capabilities:
           # bindable is inherited
       requirements:
-        - host: processor_card
-    
-    processor_card:
-      type: # Not yet defined
+        # as type is SoftwareComponent, host must be of type Compute
+        - host: processor
+
+    processor:
+      type: tosca.nodes.Compute
       attributes: *PhysicalResourceSpecAttributes
       requirements:
-        - host: slot
+      #  processor_card
+    
+    processor_card:
+      type: #Not yet defined
+      attributes: *PhysicalResourceSpecAttributes
+      requirements:
+      #  - host: slot
 
     port_card:
       type: # Not yet defined
+      capabilities: tosca.capabilities.containsNetworkPorts
       attributes: *PhysicalResourceSpecAttributes
       requirements:
         - host: slot
