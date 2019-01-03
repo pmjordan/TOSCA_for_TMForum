@@ -1,5 +1,5 @@
 tosca_definitions_version: tosca_simple_yaml_1_2
-#This version is not yet valid as slide 16 has not yet introduced values for the mandatory type field
+#This version is not yet valid as slide 17 has not yet introduced values for the mandatory type field
 
 description: Template for physical router within a tosca node.network
 topology_template:
@@ -11,8 +11,12 @@ topology_template:
       requirements:
         - binding: my_router_software
 
-    my_router_software:
+    router_software:
       type: # Not yet defined
       capabilities:
-          # bindable is inherited 
+          # bindable is inherited
+      requirements:
+        - host: my_processor_card
+    
+
 
