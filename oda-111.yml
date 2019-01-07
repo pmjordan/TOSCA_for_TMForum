@@ -40,15 +40,10 @@ topology_template:
     router_software:
       type: tosca.nodes.SoftwareComponent
       requirements:
-        - host: router_compute
-
-    router_compute:
-      type: tosca.nodes.Router.Compute
-      requirements:
-        - dependency: processor_card
+        - host: processor_card
 
     processor_card:
-      type: tosca.nodes.Root
+      type: tosca.nodes.Router.Compute
       attributes: *PhysicalResourceSpecAttributes
       requirements:
         - dependency: slot
