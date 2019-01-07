@@ -1,6 +1,6 @@
 
 tosca_definitions_version: tosca_simple_yaml_1_0
-#This aligns to slide 19 
+#This aligns to slide 19. Some type defintions are placeholders 
 
 
 
@@ -24,13 +24,12 @@ node_types:
         type: tosca.capabilities.network.Linkable
 
 
-
 description: Template for physical router within a tosca node.network
 topology_template:
   node_templates:
 
     my_port:
-      type: tosca.nodes.Root.PhysicalResourceHardware.PhysicalPort
+      type: tosca.nodes.Root
       # capabilities:
           # linkable is inherited
       requirements:
@@ -51,34 +50,33 @@ topology_template:
 
     processor:
       type: tosca.nodes.Compute
-      attributes: *PhysicalResourceSpecAttributes
       requirements:
-      #  processor_card
+        - dependency: processor_card
     
     processor_card:
-      type: #Not yet defined
+      type: tosca.nodes.Root
       attributes: *PhysicalResourceSpecAttributes
       requirements:
       #  - host: slot
 
     port_card:
-      type: # Not yet defined
+      type: tosca.nodes.Root
       capabilities: tosca.capabilities.containsNetworkPorts
       attributes: *PhysicalResourceSpecAttributes
       requirements:
         - host: slot
 
     slot:
-      type: # Not yet defined
+      type: tosca.nodes.Root
       requirements:
         - host: chassis
 
     chassis:
-      type: # Not yet defined
+      type: tosca.nodes.Root
       attributes: *PhysicalResourceSpecAttributes
 
     router:
-      type: # Not yet defined 
+      type: tosca.nodes.Root
       properties:
         property1:
           type: string
