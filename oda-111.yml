@@ -1,5 +1,5 @@
 tosca_definitions_version: tosca_simple_yaml_1_0
-#Aligns to slide 19. Some node types are place holders
+#Aligns to slide 21. Some node types are place holders
 
 dsl_definitions:
 # Create a yaml alias for parts of the TMForum Information Model which are frequently reused 
@@ -30,7 +30,7 @@ topology_template:
   node_templates:
 
     my_port:
-      type: tosca.nodes.Root
+      type: tosca.nodes.Root.PhysicalResourceHardware.PhysicalPort
       # capabilities:
           # linkable is inherited
       requirements:
@@ -43,7 +43,7 @@ topology_template:
         - host: processor_card
 
     processor_card:
-      type: tosca.nodes.Router.Compute
+      type: tosca.nodes.Root
       attributes: *PhysicalResourceSpecAttributes
       requirements:
         - dependency: slot
