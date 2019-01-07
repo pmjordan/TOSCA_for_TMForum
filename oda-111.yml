@@ -18,32 +18,31 @@ topology_template:
       # capabilities:
           # linkable is inherited  
       requirements:
-        - binding: router_software
-        - host: port_card
+        - dependency: router_software
 
     router_software:
       type: tosca.nodes.Root
       # capabilities:
           # bindable is inherited
       requirements:
-        - host: processor_card
+        - dependency: processor_card
     
     processor_card:
       type: tosca.nodes.Root
       attributes: *PhysicalResourceSpecAttributes
       requirements:
-        - host: slot
+        - dependency: slot
 
     port_card:
       type: tosca.nodes.Root
       attributes: *PhysicalResourceSpecAttributes
       requirements:
-        - host: slot
+        - dependency: slot
 
     slot:
       type: tosca.nodes.Root
       requirements:
-        - host: chassis
+        - dependency: chassis
 
     chassis:
       type: tosca.nodes.Root
