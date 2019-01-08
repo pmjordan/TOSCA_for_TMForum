@@ -10,12 +10,12 @@ dsl_definitions:
       type: string
 
 node_types:
-  tosca.nodes.Root.PhysicalResourceHardware:
+  tosca.nodes.Root.PhysicalResource.Hardware:
     derived_from: tosca.nodes.Root
   
 
-  tosca.nodes.Root.PhysicalResourceHardware.PhysicalPort:
-    derived_from: tosca.nodes.Root.PhysicalResourceHardware
+  tosca.nodes.Root.PhysicalResource.Hardware.PhysicalPort:
+    derived_from: tosca.nodes.Root.PhysicalResource.Hardware
     capabilities:
       link:
         type: tosca.capabilities.network.Linkable
@@ -74,11 +74,8 @@ topology_template:
         attribute2:
           type: boolean
         requirements:
-          - running_software:
-            node: router_software
-            relationship: ConnectsTo
-          - contained_chassis:
-            node: chassis
-            relationship: ConnectsTo
+      requirements:
+        - dependency: router_software
+        - dependency: port_card
 
 
