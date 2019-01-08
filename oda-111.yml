@@ -20,7 +20,7 @@ node_types:
       link:
         type: tosca.capabilities.network.Linkable
 
-  tosca.nodes.NetworkDevice.Compute:
+  tosca.nodes.Compute.NetworkDevice:
     derived_from: tosca.nodes.Compute
 
 
@@ -43,7 +43,7 @@ topology_template:
         - host: processor_card
 
     processor_card:
-      type: tosca.nodes.NetworkDevice.Compute
+      type: tosca.nodes.Compute.NetworkDevice
       attributes: *PhysicalResourceSpecAttributes
       requirements:
         - dependency: slot
