@@ -10,18 +10,20 @@ dsl_definitions:
       type: string
 
 node_types:
-  tosca.nodes.Root.PhysicalResourceHardware:
+  tosca.nodes.Root.PhysicalResource.Hardware:
     derived_from: tosca.nodes.Root
   
 
-  tosca.nodes.Root.PhysicalResourceHardware.PhysicalPort:
-    derived_from: tosca.nodes.Root.PhysicalResourceHardware
+  tosca.nodes.Root.PhysicalResource.Hardware.PhysicalPort:
+    derived_from: tosca.nodes.Root.PhysicalResource.Hardware
     capabilities:
       link:
         type: tosca.capabilities.network.Linkable
 
   tosca.nodes.Compute.NetworkDevice:
     derived_from: tosca.nodes.Compute
+
+
 
 
 
