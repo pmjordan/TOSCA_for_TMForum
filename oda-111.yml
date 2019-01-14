@@ -10,6 +10,10 @@ dsl_definitions:
       type: string
 
 node_types:
+  tosca.nodes.Compute.NetworkDevice:
+    derived_from: tosca.nodes.Compute
+    # provides level of indirection between SoftwareComponent and Processor-card
+
   tosca.nodes.Root.CompoundResource:
     derived_from: tosca.nodes.Root
     properties:
@@ -38,6 +42,11 @@ topology_template:
     router_software:
       type: tosca.nodes.SoftwareComponent
       #capabilities: timos
+      requirements:
+        - host: device_compute
+            
+    device_compute:
+      type: tosca.nodes.Compute.NetworkDevice
       requirements:
         - dependency: processor_card
 
