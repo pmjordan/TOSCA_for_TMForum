@@ -7,12 +7,19 @@ node_types:
     attributes: 
         modelNumber:
           type: string
+          required: false
         vendorName:
           type: string
+          required: true
         skuNumber:
           type: string
+          required: false
         partNumber:
           type: string
+          required: true
+
+  tosca.nodes.PhysicalResourceAttributes:
+    derived_from:
     
   tosca.nodes.PhysicalResource.Hardware:
     derived_from: tosca.nodes.PhysicalResource
