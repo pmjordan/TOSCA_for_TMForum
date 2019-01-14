@@ -1,12 +1,5 @@
 tosca_definitions_version: tosca_simple_yaml_1_0
 
-relationship_types:
-  tmforum.entityRelation:
-    derived_from: tosca.relationships.Root
-    capabilities:
-      cardinality:
-        type: tosca.capabilities.Scalable
-
 node_types:
 
   tosca.nodes.PhysicalResourceAttributes:
@@ -64,7 +57,7 @@ node_types:
       # but that doubles the number of child entities
     
   tosca.nodes.PhysicalResource.Hardware:
-    derived_from: tosca.nodes.PhysicalResourceh
+    derived_from: tosca.nodes.PhysicalResource
 
   tosca.nodes.PhysicalResource.Hardware.PhysicalPort:
     derived_from: tosca.nodes.PhysicalResource.Hardware
