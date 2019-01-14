@@ -1,5 +1,4 @@
 tosca_definitions_version: tosca_simple_yaml_1_0
-
 #Some node types are place holders
 
 dsl_definitions:
@@ -11,37 +10,6 @@ dsl_definitions:
       type: string
 
 node_types:
-  tosca.nodes.Root.PhysicalResource.Hardware:
-    derived_from: tosca.nodes.Root
-  
-
-  tosca.nodes.Root.PhysicalResource.Hardware.PhysicalPort:
-    derived_from: tosca.nodes.Root.PhysicalResource.Hardware
-    capabilities:
-      link:
-        type: tosca.capabilities.network.Linkable
-
-  tosca.nodes.Root.PhysicalResource.Hardware.ManagedHardware:
-    derived_from: tosca.nodes.Root.PhysicalResource.Hardware
-
-  tosca.nodes.Root.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer:
-    derived_from: tosca.nodes.Root.PhysicalResource.Hardware.ManagedHardware
-
-  tosca.nodes.Root.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment:
-    derived_from: tosca.nodes.Root.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
-
-  tosca.nodes.Root.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card:
-    derived_from: tosca.nodes.Root.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment
-
-  tosca.nodes.Root.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder:
-    derived_from: tosca.nodes.Root.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
-
-  tosca.nodes.Compute.NetworkDevice:
-    derived_from: tosca.nodes.Compute
-    capabilities:
-      link:
-        type: tosca.capabilities.network.Linkable
-
   tosca.nodes.Root.CompoundResource:
     derived_from: tosca.nodes.Root
     properties:
@@ -55,21 +23,12 @@ node_types:
       attribute2:
         type: boolean
 
-
-relationship_templates:
-  ComposedOf:
-    type: ConnectsTo
-    interfaces:
-      Configure:
-        pre_configure_source: scripts/wp_db_configure.sh
-
-
 description: Template for physical router within a tosca node.network
 topology_template:
   node_templates:
 
     my_port:
-      type: tosca.nodes.Root.PhysicalResource.Hardware.PhysicalPort
+      type: tosca.nodes.Root
       # capabilities:
           # linkable is inherited
       requirements:
@@ -89,18 +48,18 @@ topology_template:
         - dependency: slot
 
     port_card:
-      type: tosca.nodes.Root.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
+      type: tosca.nodes.Root
       attributes: *PhysicalResourceSpecAttributes
       requirements:
         - dependency: slot
 
     slot:
-      type: tosca.nodes.Root.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder
+      type: tosca.nodes.Root
       requirements:
         - dependency: chassis
 
     chassis:
-      type: tosca.nodes.Root.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment
+      type: tosca.nodes.Root
       attributes: *PhysicalResourceSpecAttributes
 
     router:
