@@ -61,9 +61,10 @@ node_types:
         #     type: string
         #   required: true
     # 5 Make two node defintions, one with and one without the extension
+      # but that doubles the number of child entities
     
   tosca.nodes.PhysicalResource.Hardware:
-    derived_from: tosca.nodes.PhysicalResource
+    derived_from: tosca.nodes.PhysicalResourceh
 
   tosca.nodes.PhysicalResource.Hardware.PhysicalPort:
     derived_from: tosca.nodes.PhysicalResource.Hardware
