@@ -1,13 +1,6 @@
 tosca_definitions_version: tosca_simple_yaml_1_0
-#Aligns to slide 19. Some node types are place holders
 
-dsl_definitions:
-# Create a yaml alias for parts of the TMForum Information Model which are frequently reused 
-  PhysicalResourceSpecAttributes: &PhysicalResourceSpecAttributes
-    vendorName:
-      type: string
-    partNumber:
-      type: string
+#Some node types are place holders
 
 node_types:
   tosca.nodes.Root.PhysicalResource.Hardware:
@@ -64,6 +57,9 @@ topology_template:
     chassis:
       type: tosca.nodes.Root
       attributes: *PhysicalResourceSpecAttributes
+      type: tosca.nodes.Root
+      
+
 
     router:
       type: # Not yet defined 
