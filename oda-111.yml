@@ -9,35 +9,38 @@ dsl_definitions:
       type: string
 
 node_types:
-  tosca.nodes.Root.PhysicalResource.Hardware:
+  tosca.nodes.PhysicalResource:
     derived_from: tosca.nodes.Root
+    
+  tosca.nodes.PhysicalResource.Hardware:
+    derived_from: tosca.nodes.PhysicalResource
 
-  tosca.nodes.Root.PhysicalResource.Hardware.PhysicalPort:
-    derived_from: tosca.nodes.Root.PhysicalResource.Hardware
+  tosca.nodes.PhysicalResource.Hardware.PhysicalPort:
+    derived_from: tosca.nodes.PhysicalResource.Hardware
     capabilities:
       link:
         type: tosca.capabilities.network.Linkable
 
-  tosca.nodes.Root.PhysicalResource.Hardware.ManagedHardware:
-    derived_from: tosca.nodes.Root.PhysicalResource.Hardware
+  tosca.nodes.PhysicalResource.Hardware.ManagedHardware:
+    derived_from: tosca.nodes.PhysicalResource.Hardware
 
-  tosca.nodes.Root.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer:
-    derived_from: tosca.nodes.Root.PhysicalResource.Hardware.ManagedHardware
+  tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer:
+    derived_from: tosca.nodes.PhysicalResource.Hardware.ManagedHardware
 
-  tosca.nodes.Root.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment:
-    derived_from: tosca.nodes.Root.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
+  tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment:
+    derived_from: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
 
-  tosca.nodes.Root.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card:
-    derived_from: tosca.nodes.Root.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment
+  tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card:
+    derived_from: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment
 
-  tosca.nodes.Root.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder:
-    derived_from: tosca.nodes.Root.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
+  tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder:
+    derived_from: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
 
   tosca.nodes.Compute.NetworkDevice:
     derived_from: tosca.nodes.Compute
     # provides level of indirection between SoftwareComponent and Processor-card
 
-  tosca.nodes.Root.CompoundResource:
+  tosca.nodes.CompoundResource:
     derived_from: tosca.nodes.Root
     properties:
       property1:
@@ -55,7 +58,7 @@ topology_template:
   node_templates:
 
     my_port:
-      type: tosca.nodes.Root.PhysicalResource.Hardware.PhysicalPort
+      type: tosca.nodes.PhysicalResource.Hardware.PhysicalPort
       # capabilities:
           # linkable is inherited
       requirements:
@@ -74,28 +77,28 @@ topology_template:
         - dependency: processor_card
 
     processor_card:
-      type: tosca.nodes.Root.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
+      type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
       attributes: *PhysicalResourceSpecAttributes
       requirements:
         - dependency: slot
 
     port_card:
-      type: tosca.nodes.Root.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
+      type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
       attributes: *PhysicalResourceSpecAttributes
       requirements:
         - dependency: slot
 
     slot:
-      type: tosca.nodes.Root.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder
+      type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder
       requirements:
         - dependency: chassis
 
     chassis:
-      type: tosca.nodes.Root.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment
+      type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment
       attributes: *PhysicalResourceSpecAttributes
 
     router:
-      type: tosca.nodes.Root.CompoundResource
+      type: tosca.nodes.CompoundResource
       properties:
         property1: a
         property2: 1
