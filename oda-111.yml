@@ -2,10 +2,14 @@ tosca_definitions_version: tosca_simple_yaml_1_0
 
 node_types:
   tosca.nodes.PhysicalResource:
-    # Equate to PhysicalResourceSpec in TM Forum Information Model
+    # Equates to PhysicalResourceSpec in TM Forum Information Model
     derived_from: tosca.nodes.Root
     attributes: 
+        modelNumber:
+          type: string
         vendorName:
+          type: string
+        skuNumber:
           type: string
         partNumber:
           type: string
