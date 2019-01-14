@@ -1,22 +1,153 @@
 tosca_definitions_version: tosca_simple_yaml_1_0
-#This version is not yet valid as slide 16 has not yet introduced values for the mandatory type field
+
+node_types:
+
+  tosca.nodes.PhysicalResourceAttributes:
+    derived_from: tosca.capabilities.Node
+    attributes: 
+      modelNumber:
+        type: string
+        required: false
+      vendorName:
+        type: string
+        required: true
+      skuNumber:
+        type: string
+        required: false
+      partNumber:
+        type: string
+        required: true
+
+  tosca.nodes.PhysicalResource:
+    # Equates to PhysicalResourceSpec in TM Forum Information Model (SID)
+    derived_from: tosca.nodes.Root
+    # In SID a PhysicalResourceSpec has a 1 : 0..1 releation to PhysicalResourceAttributes
+    # To model this in TOSCA we have these choices:
+    # 1 use capability
+      # this validates but
+        # is 1:1 (i.e. cannot be optional)
+        # PhysicalResource are both entities in SID but have to be defined as different types in TOSCA
+          # (node and capability)
+    capabilities:
+      feature: 
+        type: tosca.nodes.PhysicalResourceAttributes
+    # 2 use requirements: - dependency: capability
+      # This places a requirement on node instances derived from this spec that they MUST instantiate a node with the capabiliies defined in PhysicalResourceAttributes
+      # which is not what we want
+    # 3 use requirements: - dependency: node
+      # This places a requirement on node instances derived from this spec that they MUST instantiate a node with the type PhysicalResourceAttributes
+      # which is not what we want
+    # 4 Flatten the SID and add the attributes in this node
+      # this validates but
+        # loses the fact that if partNumber is present then vendorName must also be present 
+        # attributes: 
+        #   modelNumber:
+        #     type: string
+        #     required: false
+        #   vendorName:
+        #     type: string
+        #     required: true
+        #   skuNumber:
+        #     type: string
+        #     required: false
+        #   partNumber:
+        #     type: string
+        #   required: true
+    # 5 Make two node defintions, one with and one without the extension
+      # but that doubles the number of child entities
+    
+  tosca.nodes.PhysicalResource.Hardware:
+    derived_from: tosca.nodes.PhysicalResource
+
+  tosca.nodes.PhysicalResource.Hardware.PhysicalPort:
+    derived_from: tosca.nodes.PhysicalResource.Hardware
+    capabilities:
+      link:
+        type: tosca.capabilities.network.Linkable
+
+  tosca.nodes.PhysicalResource.Hardware.ManagedHardware:
+    derived_from: tosca.nodes.PhysicalResource.Hardware
+
+  tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer:
+    derived_from: tosca.nodes.PhysicalResource.Hardware.ManagedHardware
+
+  tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment:
+    derived_from: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
+
+  tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card:
+    derived_from: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment
+
+  tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder:
+    derived_from: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
+
+  tosca.nodes.Compute.NetworkDevice:
+    derived_from: tosca.nodes.Compute
+    # provides level of indirection between SoftwareComponent and Processor-card
+
+  tosca.nodes.CompoundResource:
+    derived_from: tosca.nodes.Root
+    properties:
+      property1:
+        type: string
+      property2:
+          type: integer
+    attributes:
+      attribute1:
+        type: float
+      attribute2:
+        type: boolean
 
 description: Template for physical router within a tosca node.network
 topology_template:
   node_templates:
+
     my_port:
-      type: # Not yet defined
-      capabilities:
-          # linkable is inherited  
+      type: tosca.nodes.PhysicalResource.Hardware.PhysicalPort
+      # capabilities:
+          # linkable is inherited
       requirements:
-        - binding: my_router_software
+        - dependency: router_software
+        - dependency: port_card
 
     router_software:
-      type: # Not yet defined
-      capabilities:
-          # bindable is inherited
+      type: tosca.nodes.SoftwareComponent
+      #capabilities: timos
       requirements:
-        - host: my_processor_card
-    
+        - host: device_compute
+            
+    device_compute:
+      type: tosca.nodes.Compute.NetworkDevice
+      requirements:
+        - dependency: processor_card
+
+    processor_card:
+      type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
+      requirements:
+        - dependency: slot
+
+    port_card:
+      type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
+      requirements:
+        - dependency: slot
+
+    slot:
+      type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder
+      requirements:
+        - dependency: chassis
+
+    chassis:
+      type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment
+
+    router:
+      type: tosca.nodes.CompoundResource
+      properties:
+        property1: a
+        property2: 1
+      attributes:
+        attribute1: 2.0
+        attribute2: true
+      requirements:
+        - dependency: router_software
+        - dependency: chassis
 
 
