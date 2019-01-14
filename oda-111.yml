@@ -1,16 +1,14 @@
 tosca_definitions_version: tosca_simple_yaml_1_0
 
-dsl_definitions:
-# Create a yaml alias for parts of the TMForum Information Model which are frequently reused 
-  PhysicalResourceSpecAttributes: &PhysicalResourceSpecAttributes
-    vendorName:
-      type: string
-    partNumber:
-      type: string
-
 node_types:
   tosca.nodes.PhysicalResource:
+    # Equate to PhysicalResourceSpec in TM Forum Information Model
     derived_from: tosca.nodes.Root
+    attributes: 
+        vendorName:
+          type: string
+        partNumber:
+          type: string
     
   tosca.nodes.PhysicalResource.Hardware:
     derived_from: tosca.nodes.PhysicalResource
@@ -78,13 +76,11 @@ topology_template:
 
     processor_card:
       type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
-      attributes: *PhysicalResourceSpecAttributes
       requirements:
         - dependency: slot
 
     port_card:
       type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
-      attributes: *PhysicalResourceSpecAttributes
       requirements:
         - dependency: slot
 
@@ -95,7 +91,6 @@ topology_template:
 
     chassis:
       type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment
-      attributes: *PhysicalResourceSpecAttributes
 
     router:
       type: tosca.nodes.CompoundResource
