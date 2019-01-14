@@ -1,17 +1,12 @@
 tosca_definitions_version: tosca_simple_yaml_1_0
 
-relationship_types:
-  tmforum.entityRelation:
-    derived_from: tosca.relationships.Root
-    capabilities:
-      cardinality:
-        type: tosca.capabilities.Scalable
-
 node_types:
 
-  tosca.nodes.PhysicalResourceAttributes:
-    derived_from: tosca.capabilities.Node
+  tosca.nodes.PhysicalResource:
+    # Equates to PhysicalResourceSpec in TM Forum Information Model (SID)
+    derived_from: tosca.nodes.Root
     attributes: 
+      # uses option 4 from stage5 i.e. the SID model is flattened
       modelNumber:
         type: string
         required: false
@@ -24,43 +19,6 @@ node_types:
       partNumber:
         type: string
         required: true
-
-  tosca.nodes.PhysicalResource:
-    # Equates to PhysicalResourceSpec in TM Forum Information Model (SID)
-    derived_from: tosca.nodes.Root
-    # In SID a PhysicalResourceSpec has a 1 : 0..1 releation to PhysicalResourceAttributes
-    # To model this in TOSCA we have these choices:
-    # 1 use capability
-      # this validates but
-        # is 1:1 (i.e. cannot be optional)
-        # PhysicalResource are both entities in SID but have to be defined as different types in TOSCA
-          # (node and capability)
-    capabilities:
-      feature: 
-        type: tosca.nodes.PhysicalResourceAttributes
-    # 2 use requirements: - dependency: capability
-      # This places a requirement on node instances derived from this spec that they MUST instantiate a node with the capabiliies defined in PhysicalResourceAttributes
-      # which is not what we want
-    # 3 use requirements: - dependency: node
-      # This places a requirement on node instances derived from this spec that they MUST instantiate a node with the type PhysicalResourceAttributes
-      # which is not what we want
-    # 4 Flatten the SID and add the attributes in this node
-      # this validates but
-        # loses the fact that if partNumber is present then vendorName must also be present 
-        # attributes: 
-        #   modelNumber:
-        #     type: string
-        #     required: false
-        #   vendorName:
-        #     type: string
-        #     required: true
-        #   skuNumber:
-        #     type: string
-        #     required: false
-        #   partNumber:
-        #     type: string
-        #   required: true
-    # 5 Make two node defintions, one with and one without the extension
     
   tosca.nodes.PhysicalResource.Hardware:
     derived_from: tosca.nodes.PhysicalResource
@@ -111,6 +69,8 @@ topology_template:
       type: tosca.nodes.PhysicalResource.Hardware.PhysicalPort
       # capabilities:
           # linkable is inherited
+      attributes:
+          # Note we do not want a value for vendor and part number here
       requirements:
         - dependency: router_software
         - dependency: port_card
@@ -130,19 +90,31 @@ topology_template:
       type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
       requirements:
         - dependency: slot
+      attributes:
+        vendorName: Acme
+        partNumber: 123
 
     port_card:
       type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
       requirements:
         - dependency: slot
+      attributes:
+        vendorName: Acme
+        partNumber: 456
 
     slot:
       type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder
       requirements:
         - dependency: chassis
+      attributes:
+        vendorName: Acme
+        partNumber: 789
 
     chassis:
       type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment
+      attributes:
+        vendorName: Acme
+        partNumber: 001
 
     router:
       type: tosca.nodes.CompoundResource
