@@ -1,23 +1,30 @@
 tosca_definitions_version: tosca_simple_yaml_1_0
+####################
+capability_types:
+####################
 
-node_types:
-
-  tosca.nodes.PhysicalResourceAttributes:
-    derived_from: tosca.capabilities.Node
-    attributes: 
+  tosca.capabilities.PhysicalResourceSpecAttributes:
+    derived_from: tosca.capabilities.Root
+    properties:
       modelNumber:
         type: string
-        required: false
+        required: True
       vendorName:
         type: string
-        required: true
+        required: True 
+    attributes:
+    # These are listed as attributes because they are read only; not because they are optional
       skuNumber:
         type: string
-        required: false
+        required: False
       partNumber:
         type: string
-        required: true
+        required: False
 
+####################
+node_types:
+####################
+    
   tosca.nodes.PhysicalResource:
     # Equates to PhysicalResourceSpec in TM Forum Information Model (SID)
     derived_from: tosca.nodes.Root
@@ -28,9 +35,9 @@ node_types:
         # is 1:1 (i.e. cannot be optional)
         # PhysicalResource are both entities in SID but have to be defined as different types in TOSCA
           # (node and capability)
-    capabilities:
-      feature: 
-        type: tosca.nodes.PhysicalResourceAttributes
+    # capabilities:
+    #   feature: 
+    #     type: tosca.nodes.PhysicalResourceAttributes
     # 2 use requirements: - dependency: capability
       # This places a requirement on node instances derived from this spec that they MUST instantiate a node with the capabiliies defined in PhysicalResourceAttributes
       # which is not what we want
@@ -55,6 +62,12 @@ node_types:
         #   required: true
     # 5 Make two node defintions, one with and one without the extension
       # but that doubles the number of child entities
+    # 6 Use capability but to a new intermediate node type
+      # we are using this option
+      ## TODO make a dependancy on this capability
+    capabilities:
+      PhysicalResourceSpecFurtherExtendedBy:
+        type: tosca.capabilities.PhysicalResourceSpecAttributes
     
   tosca.nodes.PhysicalResource.Hardware:
     derived_from: tosca.nodes.PhysicalResource
@@ -97,8 +110,10 @@ node_types:
       attribute2:
         type: boolean
 
+####################
 description: Template for physical router within a tosca node.network
 topology_template:
+####################
   node_templates:
 
     my_port:
@@ -122,8 +137,20 @@ topology_template:
 
     processor_card:
       type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
+      capabilities:
+        # Including PhysicalResourceSpecFurtherExtendedBy as I want to specifiy the extended properties
+        PhysicalResourceSpecFurtherExtendedBy:
+          properties:
+            # These are mandatory
+            modelNumber: a
+            vendorName: b
+          attributes:
+            # These are optional and would not normally be specified in a topology template
+            #skuNumber: c
+            #partNumber: d
       requirements:
         - dependency: slot
+
 
     port_card:
       type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
@@ -136,7 +163,7 @@ topology_template:
         - dependency: chassis
 
     chassis:
-      type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment
+      type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment      
 
     router:
       type: tosca.nodes.CompoundResource
