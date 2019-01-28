@@ -3,50 +3,27 @@ tosca_definitions_version: tosca_simple_yaml_1_0
 capability_types:
 ####################
 
-  tosca.capabilities.PhysicalResourceSpecFurtherExtenedBy:
-    # Equates to the RELATION of the same name in TM Forum Information Model (SID)
-    # Allows PhysicalResourceSpec to optionaly have PhysicalResourceAttributes
-    # and yet still ensure that nominated attributes of PhysicalResourceAttributes are mandatory when it is used
+  tosca.capabilities.PhysicalResourceSpecAttributes:
     derived_from: tosca.capabilities.Root
-    # capabilities:
-    #     feature: 
-    #       type: tosca.nodes.PhysicalResourceAttributes
     properties:
-      temprop4:
+      modelNumber:
         type: string
-        required: true  
+        required: True
+      vendorName:
+        type: string
+        required: True 
+    attributes:
+    # These are listed as attributes because they are read only; not because they are optional
+      skuNumber:
+        type: string
+        required: False
+      partNumber:
+        type: string
+        required: False
 
 ####################
 node_types:
 ####################
-
-  tosca.nodes.PhysicalResourceAttributes:
-  # Equates to the enitiy of the  same name in TM Forum Information Model (SID)
-    derived_from: tosca.capabilities.Node
-
-
-  tosca.nodes.PhysicalResourceSpecFurtherExtenedBy:
-    # Equates to the RELATION of the same name in TM Forum Information Model (SID)
-    # Allows PhysicalResourceSpec to optionaly have PhysicalResourceAttributes
-    # and yet still ensure that nominated attributes of PhysicalResourceAttributes are mandatory when it is used
-    derived_from: tosca.capabilities.Node
-    capabilities:
-      extended:
-        type: tosca.capabilities.PhysicalResourceSpecFurtherExtenedBy
-
-    attributes: 
-      modelNumber:
-        type: string
-        required: false
-      vendorName:
-        type: string
-        required: true
-      skuNumber:
-        type: string
-        required: false
-      partNumber:
-        type: string
-        required: true
     
   tosca.nodes.PhysicalResource:
     # Equates to PhysicalResourceSpec in TM Forum Information Model (SID)
@@ -89,9 +66,8 @@ node_types:
       # we are using this option
       ## TODO make a dependancy on this capability
     capabilities:
-      feature: 
-        type: tosca.nodes.PhysicalResourceSpecFurtherExtenedBy
-
+      PhysicalResourceSpecFurtherExtendedBy:
+        type: tosca.capabilities.PhysicalResourceSpecAttributes
     
   tosca.nodes.PhysicalResource.Hardware:
     derived_from: tosca.nodes.PhysicalResource
@@ -160,8 +136,18 @@ topology_template:
         - dependency: processor_card
 
     processor_card:
-      type: tosca.nodes.PhysicalResourceSpecFurtherExtenedBy
-      #type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
+      type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
+      capabilities:
+        # Including PhysicalResourceSpecFurtherExtendedBy as I want to specifiy the extended properties
+        PhysicalResourceSpecFurtherExtendedBy:
+          properties:
+            # These are mandatory
+            modelNumber: a
+            vendorName: b
+          attributes:
+            # These are optional and would not normally be specified in a topology template
+            #skuNumber: c
+            #partNumber: d
       requirements:
         - dependency: slot
 
@@ -170,7 +156,6 @@ topology_template:
       type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
       requirements:
         - dependency: slot
-
 
     slot:
       type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder

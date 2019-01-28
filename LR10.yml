@@ -46,6 +46,6 @@ topology_template:
             modelNumber: a
             vendorName: b
           attributes:
-            # These are optional
+            # These are optional and would not normally be specified in a topology template
             #skuNumber: c
             #partNumber: d
