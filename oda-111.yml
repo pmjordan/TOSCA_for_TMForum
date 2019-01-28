@@ -1,10 +1,39 @@
 tosca_definitions_version: tosca_simple_yaml_1_0
+####################
+capability_types:
+####################
 
+  tosca.capabilities.PhysicalResourceSpecFurtherExtenedBy:
+    # Equates to the RELATION of the same name in TM Forum Information Model (SID)
+    # Allows PhysicalResourceSpec to optionaly have PhysicalResourceAttributes
+    # and yet still ensure that nominated attributes of PhysicalResourceAttributes are mandatory when it is used
+    derived_from: tosca.capabilities.Root
+    # capabilities:
+    #     feature: 
+    #       type: tosca.nodes.PhysicalResourceAttributes
+    properties:
+      temprop4:
+        type: string
+        required: true  
+
+####################
 node_types:
+####################
 
   tosca.nodes.PhysicalResourceAttributes:
   # Equates to the enitiy of the  same name in TM Forum Information Model (SID)
     derived_from: tosca.capabilities.Node
+
+
+  tosca.nodes.PhysicalResourceSpecFurtherExtenedBy:
+    # Equates to the RELATION of the same name in TM Forum Information Model (SID)
+    # Allows PhysicalResourceSpec to optionaly have PhysicalResourceAttributes
+    # and yet still ensure that nominated attributes of PhysicalResourceAttributes are mandatory when it is used
+    derived_from: tosca.capabilities.Node
+    capabilities:
+      extended:
+        type: tosca.capabilities.PhysicalResourceSpecFurtherExtenedBy
+
     attributes: 
       modelNumber:
         type: string
@@ -18,16 +47,7 @@ node_types:
       partNumber:
         type: string
         required: true
-
-  tosca.nodes.PhysicalResourceSpecFurtherExtenedBy:
-    # Equates to the RELATION of the same name in TM Forum Information Model (SID)
-    # Allows PhysicalResourceSpec to optionaly have PhysicalResourceAttributes
-    # and yet still ensure that nominated attributes of PhysicalResourceAttributes are mandatory when it is used
-    derived_from: tosca.capabilities.Node
-    capabilities:
-        feature: 
-          type: tosca.nodes.PhysicalResourceAttributes
-
+    
   tosca.nodes.PhysicalResource:
     # Equates to PhysicalResourceSpec in TM Forum Information Model (SID)
     derived_from: tosca.nodes.Root
@@ -66,6 +86,8 @@ node_types:
     # 5 Make two node defintions, one with and one without the extension
       # but that doubles the number of child entities
     # 6 Use capability but to a new intermediate node type
+      # we are using this option
+      ## TODO make a dependancy on this capability
     capabilities:
       feature: 
         type: tosca.nodes.PhysicalResourceSpecFurtherExtenedBy
@@ -112,8 +134,10 @@ node_types:
       attribute2:
         type: boolean
 
+####################
 description: Template for physical router within a tosca node.network
 topology_template:
+####################
   node_templates:
 
     my_port:
@@ -136,14 +160,17 @@ topology_template:
         - dependency: processor_card
 
     processor_card:
-      type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
+      type: tosca.nodes.PhysicalResourceSpecFurtherExtenedBy
+      #type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
       requirements:
         - dependency: slot
+
 
     port_card:
       type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
       requirements:
         - dependency: slot
+
 
     slot:
       type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder
@@ -151,7 +178,7 @@ topology_template:
         - dependency: chassis
 
     chassis:
-      type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment
+      type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment      
 
     router:
       type: tosca.nodes.CompoundResource
