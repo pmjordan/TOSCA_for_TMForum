@@ -25,19 +25,13 @@ capability_types:
 node_types:
 ####################
     
-  tosca.nodes.PhysicalResource:
+  tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource:
     # Equates to PhysicalResourceSpec in TM Forum Information Model (SID)
     derived_from: tosca.nodes.Root
     # In SID a PhysicalResourceSpec has a 1 : 0..1 releation to PhysicalResourceAttributes
     # To model this in TOSCA we have these choices:
     # 1 use capability
-      # this validates but
-        # is 1:1 (i.e. cannot be optional)
-        # PhysicalResource are both entities in SID but have to be defined as different types in TOSCA
-          # (node and capability)
-    # capabilities:
-    #   feature: 
-    #     type: tosca.nodes.PhysicalResourceAttributes
+      # We use this option
     # 2 use requirements: - dependency: capability
       # This places a requirement on node instances derived from this spec that they MUST instantiate a node with the capabiliies defined in PhysicalResourceAttributes
       # which is not what we want
@@ -63,35 +57,34 @@ node_types:
     # 5 Make two node defintions, one with and one without the extension
       # but that doubles the number of child entities
     # 6 Use capability but to a new intermediate node type
-      # we are using this option
-      ## TODO make a dependancy on this capability
+      # Does not seem to add anything helpful
     capabilities:
       PhysicalResourceSpecFurtherExtendedBy:
         type: tosca.capabilities.PhysicalResourceSpecAttributes
     
-  tosca.nodes.PhysicalResource.Hardware:
-    derived_from: tosca.nodes.PhysicalResource
+  tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware:
+    derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource
 
-  tosca.nodes.PhysicalResource.Hardware.PhysicalPort:
-    derived_from: tosca.nodes.PhysicalResource.Hardware
+  tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.PhysicalPort:
+    derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware
     capabilities:
       link:
         type: tosca.capabilities.network.Linkable
 
-  tosca.nodes.PhysicalResource.Hardware.ManagedHardware:
-    derived_from: tosca.nodes.PhysicalResource.Hardware
+  tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware:
+    derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware
 
-  tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer:
-    derived_from: tosca.nodes.PhysicalResource.Hardware.ManagedHardware
+  tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer:
+    derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware
 
-  tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment:
-    derived_from: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
+  tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment:
+    derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
 
-  tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card:
-    derived_from: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment
+  tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card:
+    derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment
 
-  tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder:
-    derived_from: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
+  tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder:
+    derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
 
   tosca.nodes.Compute.NetworkDevice:
     derived_from: tosca.nodes.Compute
@@ -117,7 +110,7 @@ topology_template:
   node_templates:
 
     my_port:
-      type: tosca.nodes.PhysicalResource.Hardware.PhysicalPort
+      type: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.PhysicalPort
       # capabilities:
           # linkable is inherited
       requirements:
@@ -136,7 +129,7 @@ topology_template:
         - dependency: processor_card
 
     processor_card:
-      type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
+      type: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
       capabilities:
         # Including PhysicalResourceSpecFurtherExtendedBy as I want to specifiy the extended properties
         PhysicalResourceSpecFurtherExtendedBy:
@@ -153,17 +146,17 @@ topology_template:
 
 
     port_card:
-      type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
+      type: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
       requirements:
         - dependency: slot
 
     slot:
-      type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder
+      type: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder
       requirements:
         - dependency: chassis
 
     chassis:
-      type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment      
+      type: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment      
 
     router:
       type: tosca.nodes.CompoundResource
