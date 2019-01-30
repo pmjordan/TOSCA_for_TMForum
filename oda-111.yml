@@ -9,32 +9,32 @@ dsl_definitions:
       type: string
 
 node_types:
-  tosca.nodes.PhysicalResource:
+  tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource:
     derived_from: tosca.nodes.Root
     
-  tosca.nodes.PhysicalResource.Hardware:
-    derived_from: tosca.nodes.PhysicalResource
+  tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware:
+    derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource
 
-  tosca.nodes.PhysicalResource.Hardware.PhysicalPort:
-    derived_from: tosca.nodes.PhysicalResource.Hardware
+  tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.PhysicalPort:
+    derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware
     capabilities:
       link:
         type: tosca.capabilities.network.Linkable
 
-  tosca.nodes.PhysicalResource.Hardware.ManagedHardware:
-    derived_from: tosca.nodes.PhysicalResource.Hardware
+  tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware:
+    derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware
 
-  tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer:
-    derived_from: tosca.nodes.PhysicalResource.Hardware.ManagedHardware
+  tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer:
+    derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware
 
-  tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment:
-    derived_from: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
+  tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment:
+    derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
 
-  tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card:
-    derived_from: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment
+  tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card:
+    derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment
 
-  tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder:
-    derived_from: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
+  tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder:
+    derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
 
   tosca.nodes.Compute.NetworkDevice:
     derived_from: tosca.nodes.Compute
@@ -58,7 +58,7 @@ topology_template:
   node_templates:
 
     my_port:
-      type: tosca.nodes.PhysicalResource.Hardware.PhysicalPort
+      type: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.PhysicalPort
       # capabilities:
           # linkable is inherited
       requirements:
@@ -77,24 +77,24 @@ topology_template:
         - dependency: processor_card
 
     processor_card:
-      type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
+      type: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
       attributes: *PhysicalResourceSpecAttributes
       requirements:
         - dependency: slot
 
     port_card:
-      type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
+      type: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
       attributes: *PhysicalResourceSpecAttributes
       requirements:
         - dependency: slot
 
     slot:
-      type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder
+      type: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder
       requirements:
         - dependency: chassis
 
     chassis:
-      type: tosca.nodes.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment
+      type: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment
       attributes: *PhysicalResourceSpecAttributes
 
     router:
