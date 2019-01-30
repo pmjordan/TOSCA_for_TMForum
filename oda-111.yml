@@ -147,7 +147,7 @@ topology_template:
 
     port_card:
       type: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
-        capabilities:
+      capabilities:
         # Including PhysicalResourceSpecFurtherExtendedBy as I want to specifiy the extended properties
         PhysicalResourceSpecFurtherExtendedBy:
           properties:
@@ -158,7 +158,7 @@ topology_template:
             # These are optional and would not normally be specified in a topology template
             #skuNumber: c
             #partNumber: d
-        requirements:
+      requirements:
         - dependency: slot
 
     slot:
