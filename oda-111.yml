@@ -4,6 +4,7 @@ capability_types:
 ####################
 
   tosca.capabilities.PhysicalResourceSpecAttributes:
+    # equates to SIDMOdels.ResourceDomain.ResourceSpecificationABE.PhysicalResourceSpecificationABE.PhysicalResourceSpecAttributes
     derived_from: tosca.capabilities.Root
     properties:
       modelNumber:
@@ -20,6 +21,7 @@ capability_types:
       partNumber:
         type: string
         required: False
+
 
 ####################
 node_types:
