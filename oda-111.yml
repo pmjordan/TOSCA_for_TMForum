@@ -25,9 +25,24 @@ capability_types:
 node_types:
 ####################
     
+  tosca.nodes.SIDModels:
+    derived_from: tosca.nodes.Root
+    
+  tosca.nodes.SIDModels.ResourceDomain:
+    derived_from: tosca.nodes.SIDModels
+    
+  tosca.nodes.SIDModels.ResourceDomain.ResourceABE:
+    derived_from: tosca.nodes.SIDModels.ResourceDomain
+    
+  tosca.nodes.SIDModels.ResourceDomain.ResourceABE.CompoundResourceABE:
+    derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE
+    
+  tosca.nodes.SIDModels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource:
+    derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.CompoundResourceABE
+  
   tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource:
     # Equates to PhysicalResourceSpec in TM Forum Information Model (SID)
-    derived_from: tosca.nodes.Root
+    derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE
     # In SID a PhysicalResourceSpec has a 1 : 0..1 releation to PhysicalResourceAttributes
     # To model this in TOSCA we have these choices:
     # 1 use capability
@@ -91,7 +106,7 @@ node_types:
     # provides level of indirection between SoftwareComponent and Processor-card
 
   tosca.nodes.CompoundResource:
-    derived_from: tosca.nodes.Root
+    derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource
     properties:
       property1:
         type: string
@@ -152,7 +167,7 @@ topology_template:
         PhysicalResourceSpecFurtherExtendedBy:
           properties:
             # These are mandatory
-            modelNumber: "2222"
+            modelNumber: "1111"
             vendorName: Acme
           attributes:
             # These are optional and would not normally be specified in a topology template
@@ -163,17 +178,6 @@ topology_template:
 
     slot:
       type: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder
-      capabilities:
-        # Including PhysicalResourceSpecFurtherExtendedBy as I want to specifiy the extended properties
-        PhysicalResourceSpecFurtherExtendedBy:
-          properties:
-            # These are mandatory
-            modelNumber: "3333"
-            vendorName: Acme
-          attributes:
-            # These are optional and would not normally be specified in a topology template
-            #skuNumber: c
-            #partNumber: d
       requirements:
         - dependency: chassis
 
