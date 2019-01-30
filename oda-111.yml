@@ -134,12 +134,16 @@ topology_template:
 
     router_software:
       type: tosca.nodes.SoftwareComponent
-      #capabilities: timos
       requirements:
         - host: device_compute
             
     device_compute:
       type: tosca.nodes.Compute.NetworkDevice
+      capabilities:
+        os:
+          properties:
+            type: timos
+            version: "16.0"
       requirements:
         - dependency: processor_card
 
