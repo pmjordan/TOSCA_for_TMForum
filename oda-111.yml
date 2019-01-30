@@ -135,8 +135,8 @@ topology_template:
         PhysicalResourceSpecFurtherExtendedBy:
           properties:
             # These are mandatory
-            modelNumber: a
-            vendorName: b
+            modelNumber: "1111"
+            vendorName: Acme
           attributes:
             # These are optional and would not normally be specified in a topology template
             #skuNumber: c
@@ -147,11 +147,33 @@ topology_template:
 
     port_card:
       type: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
-      requirements:
+        capabilities:
+        # Including PhysicalResourceSpecFurtherExtendedBy as I want to specifiy the extended properties
+        PhysicalResourceSpecFurtherExtendedBy:
+          properties:
+            # These are mandatory
+            modelNumber: "2222"
+            vendorName: Acme
+          attributes:
+            # These are optional and would not normally be specified in a topology template
+            #skuNumber: c
+            #partNumber: d
+        requirements:
         - dependency: slot
 
     slot:
       type: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder
+      capabilities:
+        # Including PhysicalResourceSpecFurtherExtendedBy as I want to specifiy the extended properties
+        PhysicalResourceSpecFurtherExtendedBy:
+          properties:
+            # These are mandatory
+            modelNumber: "3333"
+            vendorName: Acme
+          attributes:
+            # These are optional and would not normally be specified in a topology template
+            #skuNumber: c
+            #partNumber: d
       requirements:
         - dependency: chassis
 
