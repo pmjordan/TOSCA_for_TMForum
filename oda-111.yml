@@ -131,15 +131,14 @@ topology_template:
     processor_card:
       type: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
       capabilities:
-        # Including PhysicalResourceSpecFurtherExtendedBy to allow specification the extended properties
+        # Including PhysicalResourceSpecFurtherExtendedBy as I want to specifiy the extended properties
         PhysicalResourceSpecFurtherExtendedBy:
           properties:
-            # These properties are mandatory in PhysicalResourceSpecFurtherExtendedBy
-            # In this example the precise model number is specified, often a node filter would be more appropriate
-            modelNumber: "1111"
-            vendorName: Acme
+            # These are mandatory
+            modelNumber: a
+            vendorName: b
           attributes:
-            # These are optional PhysicalResourceSpecFurtherExtendedBy and would not normally be specified in a topology template
+            # These are optional and would not normally be specified in a topology template
             #skuNumber: c
             #partNumber: d
       requirements:
@@ -148,17 +147,6 @@ topology_template:
 
     port_card:
       type: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
-      capabilities:
-        # Including PhysicalResourceSpecFurtherExtendedBy to allow specification the extended properties
-        PhysicalResourceSpecFurtherExtendedBy:
-          properties:
-            # These are mandatory
-            modelNumber: "2222"
-            vendorName: Acme
-          attributes:
-            # These are optional and would not normally be specified in a topology template
-            #skuNumber: c
-            #partNumber: d      
       requirements:
         - dependency: slot
 
@@ -169,17 +157,6 @@ topology_template:
 
     chassis:
       type: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment      
-      capabilities:
-        # Including PhysicalResourceSpecFurtherExtendedBy to allow specification the extended properties
-        PhysicalResourceSpecFurtherExtendedBy:
-          properties:
-            # These are mandatory
-            modelNumber: "3333"
-            vendorName: Acme
-          attributes:
-            # These are optional and would not normally be specified in a topology template
-            #skuNumber: c
-            #partNumber: d
 
     router:
       type: tosca.nodes.CompoundResource
