@@ -254,20 +254,6 @@ node_types:
     # Other Avanced features may be listed as subsequent capabilities
 
 
-  # tosca.nodes.RouterSoftware.Acme.Release16:
-  #   derived_from: tosca.nodes.RouterSoftware.Acme
-  #   capabilities:
-  #     ComplexQosFeature:
-  #       type: tosca.capabilities.ComplexQosFeature   
-
-  # tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.PhysicalPort.Advanced:
-  #   derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.PhysicalPort
-  #   capabilities:
-  #     complexQoS:
-  #       type: tosca.capabilities.ComplexQosFeature
-  #     # Other Avanced features may be listed as subsequent capabilities
-
-
 ####################
 description: Template for physical router within a tosca node.network
 topology_template:
