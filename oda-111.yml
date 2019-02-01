@@ -100,7 +100,9 @@ node_types:
       complexQoS:
         type: tosca.capabilities.ComplexQosFeature
       # Other Avanced features may be listed as subsequent capabilities
-
+    requirements:
+      - dependency: router_software
+      - dependency: port_card
   
 
   tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware:
@@ -114,6 +116,7 @@ node_types:
 
   tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card:
     derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment
+    
 
   tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder:
     derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
@@ -121,6 +124,8 @@ node_types:
   tosca.nodes.Compute.NetworkDevice:
     derived_from: tosca.nodes.Compute
     description: provides level of indirection between SoftwareComponent and Processor-card
+    requirements:
+      - dependency: processor_card
 
   tosca.nodes.CompoundResource:
     derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource
@@ -135,8 +140,16 @@ node_types:
       attribute2:
         type: boolean
 
+  tosca.nodes.ModularRouter:
+    derived_from: tosca.nodes.CompoundResource
+    requirements:
+      - dependency: router_software
+      - dependency: chassis
+
   tosca.nodes.RouterSoftware:
     derived_from: tosca.nodes.SoftwareComponent
+    requirements:
+      - host: device_compute
 
   tosca.nodes.RouterSoftware.Acme:
     derived_from: tosca.nodes.RouterSoftware
@@ -159,14 +172,11 @@ topology_template:
       # capabilities:
           # linkable is inherited
           # ComplexQoS is defined by type but has no attributes which need value assigment here.
-      requirements:
-        - dependency: router_software
-        - dependency: port_card
+
 
     router_software:
       type: tosca.nodes.RouterSoftware.Acme.Release16
-      requirements:
-        - host: device_compute
+
     
             
     device_compute:
@@ -176,8 +186,7 @@ topology_template:
           properties:
             type: timos
             version: "16.0"
-      requirements:
-        - dependency: processor_card
+
 
     processor_card:
       type: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
@@ -221,15 +230,13 @@ topology_template:
       type: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment      
 
     router:
-      type: tosca.nodes.CompoundResource
+      type: tosca.nodes.ModularRouter
       properties:
         property1: a
         property2: 1
       attributes:
         attribute1: 2.0
         attribute2: true
-      requirements:
-        - dependency: router_software
-        - dependency: chassis
+
 
     
