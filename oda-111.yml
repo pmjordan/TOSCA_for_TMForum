@@ -4,7 +4,8 @@ capability_types:
 ####################
 
   tosca.capabilities.PhysicalResourceSpecAttributes:
-    # equates to SIDMOdels.ResourceDomain.ResourceSpecificationABE.PhysicalResourceSpecificationABE.PhysicalResourceSpecAttributes
+    descripton: Equates to SIDMOdels.ResourceDomain.ResourceSpecificationABE.PhysicalResourceSpecificationABE.PhysicalResourceSpecAttributes
+    # No need to use an inheritance tree for this as it contains no inherited attributes. No harm in doing so if it makes sense for automated mapping but for now derive from root
     derived_from: tosca.capabilities.Root
     properties:
       modelNumber:
@@ -21,6 +22,11 @@ capability_types:
       partNumber:
         type: string
         required: False
+
+  tosca.capabilities.ComplexQosFeature:
+    derived_from: tosca.capabilities.Root
+    description: The ComplexQosFeature capability is an example of how a (vendor specific) feature, when included on a Node Type or Template defintion, indicates that the node can implement that feature
+    
 
 
 ####################
@@ -43,7 +49,7 @@ node_types:
     derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.CompoundResourceABE
   
   tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource:
-    # Equates to PhysicalResourceSpec in TM Forum Information Model (SID)
+    description: Equates to PhysicalResourceSpec in TM Forum Information Model (SID)
     derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE
     # In SID a PhysicalResourceSpec has a 1 : 0..1 releation to PhysicalResourceAttributes
     # To model this in TOSCA we have these choices:
@@ -87,6 +93,15 @@ node_types:
     capabilities:
       link:
         type: tosca.capabilities.network.Linkable
+      
+  tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.PhysicalPort.Advanced:
+    derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.PhysicalPort
+    capabilities:
+      complexQoS:
+        type: tosca.capabilities.ComplexQosFeature
+      # Other Avanced features may be listed as subsequent capabilities
+
+  
 
   tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware:
     derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware
@@ -105,7 +120,7 @@ node_types:
 
   tosca.nodes.Compute.NetworkDevice:
     derived_from: tosca.nodes.Compute
-    # provides level of indirection between SoftwareComponent and Processor-card
+    description: provides level of indirection between SoftwareComponent and Processor-card
 
   tosca.nodes.CompoundResource:
     derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource
@@ -120,6 +135,19 @@ node_types:
       attribute2:
         type: boolean
 
+  tosca.nodes.RouterSoftware:
+    derived_from: tosca.nodes.SoftwareComponent
+
+  tosca.nodes.RouterSoftware.Acme:
+    derived_from: tosca.nodes.RouterSoftware
+
+  tosca.nodes.RouterSoftware.Acme.Release16:
+    derived_from: tosca.nodes.RouterSoftware.Acme
+    capabilities:
+      ComplexQosFeature:
+        type: tosca.capabilities.ComplexQosFeature   
+
+
 ####################
 description: Template for physical router within a tosca node.network
 topology_template:
@@ -127,17 +155,19 @@ topology_template:
   node_templates:
 
     my_port:
-      type: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.PhysicalPort
+      type: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.PhysicalPort.Advanced
       # capabilities:
           # linkable is inherited
+          # ComplexQoS is defined by type but has no attributes which need value assigment here.
       requirements:
         - dependency: router_software
         - dependency: port_card
 
     router_software:
-      type: tosca.nodes.SoftwareComponent
+      type: tosca.nodes.RouterSoftware.Acme.Release16
       requirements:
         - host: device_compute
+    
             
     device_compute:
       type: tosca.nodes.Compute.NetworkDevice
@@ -202,4 +232,4 @@ topology_template:
         - dependency: router_software
         - dependency: chassis
 
-
+    
