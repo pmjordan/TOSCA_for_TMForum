@@ -23,16 +23,24 @@ capability_types:
         type: string
         required: False
 
-  tosca.capabilities.ComplexQosFeature:
+  Acme.ComplexQosFeature:
     derived_from: tosca.capabilities.Root
     description: The ComplexQosFeature capability is an example of how a (vendor specific) feature, when included on a Node Type or Template defintion, indicates that the node can implement that feature
-    
+    properties:
+      enabled:
+        type: boolean
+        required: False
+        default: False
+
 
 
 ####################
 node_types:
 ####################
-    
+
+  ###################
+  # node types from SID model
+  ###################
   tosca.nodes.SIDModels:
     derived_from: tosca.nodes.Root
     
@@ -91,20 +99,10 @@ node_types:
   tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.PhysicalPort:
     derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware
     capabilities:
+      # SID does not define the linkable capability but all tosca ports are linkable
       link:
         type: tosca.capabilities.network.Linkable
-      
-  tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.PhysicalPort.Advanced:
-    derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.PhysicalPort
-    capabilities:
-      complexQoS:
-        type: tosca.capabilities.ComplexQosFeature
-      # Other Avanced features may be listed as subsequent capabilities
-    requirements:
-      - dependency: router_software
-      - dependency: port_card
-  
-
+   
   tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware:
     derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware
 
@@ -116,18 +114,14 @@ node_types:
 
   tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card:
     derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment
-    
 
   tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder:
     derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
-
-  tosca.nodes.Compute.NetworkDevice:
-    derived_from: tosca.nodes.Compute
-    description: provides level of indirection between SoftwareComponent and Processor-card
-    requirements:
-      - dependency: processor_card
-
-  tosca.nodes.CompoundResource:
+  
+  ###################
+  # node types for generic modular router
+  ###################
+  tosca.nodes.ModularRouter:
     derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource
     properties:
       property1:
@@ -139,26 +133,139 @@ node_types:
         type: float
       attribute2:
         type: boolean
-
-  tosca.nodes.ModularRouter:
-    derived_from: tosca.nodes.CompoundResource
     requirements:
-      - dependency: router_software
-      - dependency: chassis
+      - router_software:
+          node: tosca.nodes.RouterSoftware
+          relationship: dependancy
+      - chassis:
+          node: tosca.nodes.chassis
+          relationship: dependancy
 
   tosca.nodes.RouterSoftware:
     derived_from: tosca.nodes.SoftwareComponent
     requirements:
-      - host: device_compute
+      - host: 
+          node: tosca.nodes.Compute.NetworkDevice
+
+  tosca.nodes.Compute.NetworkDevice:
+    derived_from: tosca.nodes.Compute
+    description: provides level of indirection between SoftwareComponent and Processor-card
+    requirements:
+      - processor_card:
+          node: tosca.nodes.processor_card
+          relationship: dependancy
+
+  tosca.nodes.processor_card:
+    derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
+    requirements:
+      - slot:
+          node: tosca.nodes.slot
+          relationship: dependancy
+
+  tosca.nodes.PhysicalPort.OnCard:
+    derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.PhysicalPort
+    requirements:
+      - router_software:
+          node: tosca.nodes.RouterSoftware
+          relationship: dependancy
+      - port_card:
+          node: tosca.nodes.port_card
+          relationship: dependancy
+
+  tosca.nodes.port_card:
+    derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
+    requirements:
+      - slot:
+          node: tosca.nodes.slot
+          relationship: dependancy
+
+  tosca.nodes.slot:
+    derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder
+    requirements:
+      - chassis:
+          node: tosca.nodes.chassis
+          relationship: dependancy
+
+  tosca.nodes.chassis:
+      derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment      
+      
+  ###################
+  # node types for Acme modular router
+  ###################
+
+  tosca.nodes.port_card.Acme.1111:
+  # We are going to use SID PhysicalResourceSpecFurtherExtendedBy in which both vendorName and modelNumber are mandatory
+  # and so we derive ACME model 1111 directly from port_card rather than defining an Acme port_card and inheriting from that
+    derived_from: tosca.nodes.port_card
+    capabilities:
+      # Including PhysicalResourceSpecFurtherExtendedBy as I want to specifiy the extended properties
+      PhysicalResourceSpecFurtherExtendedBy:
+        properties:
+          # These are mandatory
+          modelNumber: "1111"
+          vendorName: Acme
+        attributes:
+          # These are optional and would not normally be specified in a topology template
+          #skuNumber: c
+          #partNumber: d
+
+  tosca.nodes.processor_card.Acme.2222:
+    derived_from: tosca.nodes.processor_card
+    capabilities:
+      # Including PhysicalResourceSpecFurtherExtendedBy as I want to specifiy the extended properties
+      PhysicalResourceSpecFurtherExtendedBy:
+        properties:
+          # These are mandatory
+          modelNumber: "2222"
+          vendorName: Acme
+        attributes:
+          # These are optional and would not normally be specified in a topology template
+          #skuNumber: c
+          #partNumber: d
+
+  tosca.nodes.PhysicalPort.OnCard.Acme:
+    derived_from: tosca.nodes.PhysicalPort.OnCard
+    requirements:
+      - router_software:
+          # This is one way of specifying the dependancy is on type of Acme
+          node: tosca.nodes.RouterSoftware.Acme
+      - port_card:
+          node: tosca.nodes.port_card
+          # This is another way of specifying the dependancy is on type of Acme
+          node_filter:
+          - port_card:
+            properties:
+              vendorName: { equal: Acme }
+          relationship: dependancy
 
   tosca.nodes.RouterSoftware.Acme:
     derived_from: tosca.nodes.RouterSoftware
 
-  tosca.nodes.RouterSoftware.Acme.Release16:
-    derived_from: tosca.nodes.RouterSoftware.Acme
-    capabilities:
-      ComplexQosFeature:
-        type: tosca.capabilities.ComplexQosFeature   
+  ###################
+  # node types to add the advanced QoS feature
+  ###################
+
+  tosca.nodes.PhysicalPort.OnCard.Acme.Advanced:
+    derived_from: tosca.nodes.PhysicalPort.OnCard.Acme
+    capabilities: 
+      complexQoS:
+        type: Acme.ComplexQosFeature
+      
+    # Other Avanced features may be listed as subsequent capabilities
+
+
+  # tosca.nodes.RouterSoftware.Acme.Release16:
+  #   derived_from: tosca.nodes.RouterSoftware.Acme
+  #   capabilities:
+  #     ComplexQosFeature:
+  #       type: tosca.capabilities.ComplexQosFeature   
+
+  # tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.PhysicalPort.Advanced:
+  #   derived_from: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.PhysicalPort
+  #   capabilities:
+  #     complexQoS:
+  #       type: tosca.capabilities.ComplexQosFeature
+  #     # Other Avanced features may be listed as subsequent capabilities
 
 
 ####################
@@ -168,66 +275,11 @@ topology_template:
   node_templates:
 
     my_port:
-      type: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.PhysicalPort.Advanced
-      # capabilities:
-          # linkable is inherited
-          # ComplexQoS is defined by type but has no attributes which need value assigment here.
-
-
-    router_software:
-      type: tosca.nodes.RouterSoftware.Acme.Release16
-
-    
-            
-    device_compute:
-      type: tosca.nodes.Compute.NetworkDevice
+      type: tosca.nodes.PhysicalPort.OnCard.Acme.Advanced
       capabilities:
-        os:
+        complexQoS: 
           properties:
-            type: timos
-            version: "16.0"
-
-
-    processor_card:
-      type: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
-      capabilities:
-        # Including PhysicalResourceSpecFurtherExtendedBy as I want to specifiy the extended properties
-        PhysicalResourceSpecFurtherExtendedBy:
-          properties:
-            # These are mandatory
-            modelNumber: "1111"
-            vendorName: Acme
-          attributes:
-            # These are optional and would not normally be specified in a topology template
-            #skuNumber: c
-            #partNumber: d
-      requirements:
-        - dependency: slot
-
-
-    port_card:
-      type: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
-      capabilities:
-        # Including PhysicalResourceSpecFurtherExtendedBy as I want to specifiy the extended properties
-        PhysicalResourceSpecFurtherExtendedBy:
-          properties:
-            # These are mandatory
-            modelNumber: "1111"
-            vendorName: Acme
-          attributes:
-            # These are optional and would not normally be specified in a topology template
-            #skuNumber: c
-            #partNumber: d
-      requirements:
-        - dependency: slot
-
-    slot:
-      type: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder
-      requirements:
-        - dependency: chassis
-
-    chassis:
-      type: tosca.nodes.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment      
+            enabled: True
 
     router:
       type: tosca.nodes.ModularRouter
