@@ -3,6 +3,10 @@ tosca_definitions_version: tosca_simple_yaml_1_0
 capability_types:
 ####################
 
+  ####################
+  # Capabilities to implement SID 
+  ####################
+
   tosca.capabilities.PhysicalResourceSpecAttributes:
     descripton: Equates to SIDMOdels.ResourceDomain.ResourceSpecificationABE.PhysicalResourceSpecificationABE.PhysicalResourceSpecAttributes
     # No need to use an inheritance tree for this as it contains no inherited attributes. No harm in doing so if it makes sense for automated mapping but for now derive from root
@@ -23,8 +27,13 @@ capability_types:
         type: string
         required: False
 
+  ####################
+  # Capabilities to implement vendor specific features 
+  ####################
+
   Acme.ComplexQosFeature:
     derived_from: tosca.capabilities.Root
+    # TODO A capability probably maps to a SID (resource)function so resolve how to derive SID function from tosca capabilities
     description: The ComplexQosFeature capability is an example of how a (vendor specific) feature, when included on a Node Type or Template defintion, indicates that the node can implement that feature
     properties:
       enabled:
@@ -43,6 +52,22 @@ node_types:
   ###################
   tosca.nodes.SIDModels:
     derived_from: tosca.nodes.Root
+    properties:
+      # mapping examples of those attributes of SID RootEntity which are not relationships and are not read only to TOSCA properties
+      # JSON and therefore YAML and TOSCA does not have a syntax to declare that an attribute must be unique and so that (and
+      # possibly other) aspect of the SID defintion is lost when mapping to TOSCA
+      description:
+        type: string
+        required: False
+        description: This is a string, and defines a textual identifier of an object
+      name:
+        type: string
+        description: Represents a user-friendly identifier of an object...
+        required: False
+    attributes:
+    # If there were any SID read only attributes they would be mapped to TOSCA attributes here
+      
+
     
   tosca.nodes.SIDModels.ResourceDomain:
     derived_from: tosca.nodes.SIDModels
@@ -143,6 +168,7 @@ node_types:
 
   tosca.nodes.RouterSoftware:
     derived_from: tosca.nodes.SoftwareComponent
+    # TODO This probably maps to a SID SoftwareSpecification so resolve how to derive SID entity and tosca node
     requirements:
       - host: 
           node: tosca.nodes.Compute.NetworkDevice
@@ -150,6 +176,7 @@ node_types:
   tosca.nodes.Compute.NetworkDevice:
     derived_from: tosca.nodes.Compute
     description: provides level of indirection between SoftwareComponent and Processor-card
+    # TODO Level of indirection probably maps to a SID PhysicalBlackBoxSpec so resolve how to derive SID entity and tosca node
     requirements:
       - processor_card:
           node: tosca.nodes.processor_card
