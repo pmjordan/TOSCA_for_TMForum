@@ -7,7 +7,7 @@ capability_types:
     derived_from: tosca.capabilities.Container
     properties:
       name:
-        type: string
+        type: boolean
 
 ####################
 node_types:
@@ -28,5 +28,5 @@ topology_template:
       capabilities:
         myfeature:
           properties:
-            # property type is boolean but should be string. Mis match not shown by sommelier 
-            name: True
+            # property type is string but should be boolen. Mis match not shown by sommelier 
+            name: "a string."
