@@ -38,10 +38,10 @@ node_types:
   # node types for Acme modular router
   ###################
 
-  tosca.nodes.port_card.Acme.1111:
+  TMForum.IGxxxx.nodes.port_card.Acme.1111:
   # We are going to use SID PhysicalResourceSpecFurtherExtendedBy in which both vendorName and modelNumber are mandatory
   # and so we derive ACME model 1111 directly from port_card rather than defining an Acme port_card and inheriting from that
-    derived_from: tosca.nodes.port_card
+    derived_from: TMForum.IGxxxx.nodes.port_card
     capabilities:
       # Including PhysicalResourceSpecFurtherExtendedBy as I want to specifiy the extended properties
       PhysicalResourceSpecFurtherExtendedBy:
@@ -54,8 +54,8 @@ node_types:
           #skuNumber: c
           #partNumber: d
 
-  tosca.nodes.processor_card.Acme.2222:
-    derived_from: tosca.nodes.processor_card
+  TMForum.IGxxxx.nodes.processor_card.Acme.2222:
+    derived_from: TMForum.IGxxxx.nodes.processor_card
     capabilities:
       # Including PhysicalResourceSpecFurtherExtendedBy as I want to specifiy the extended properties
       PhysicalResourceSpecFurtherExtendedBy:
@@ -68,14 +68,14 @@ node_types:
           #skuNumber: c
           #partNumber: d
 
-  tosca.nodes.PhysicalPort.OnCard.Acme:
-    derived_from: tosca.nodes.PhysicalPort.OnCard
+  TMForum.IGxxxx.nodes.PhysicalPort.OnCard.Acme:
+    derived_from: TMForum.IGxxxx.nodes.PhysicalPort.OnCard
     requirements:
       - router_software:
           # This is one way of specifying the dependancy is on type of Acme
-          node: tosca.nodes.RouterSoftware.Acme
+          node: TMForum.IGxxxx.nodes.RouterSoftware.Acme
       - port_card:
-          node: tosca.nodes.port_card
+          node: TMForum.IGxxxx.nodes.port_card
           # This is another way of specifying the dependancy is on type of Acme
           node_filter:
           - port_card:
@@ -83,18 +83,18 @@ node_types:
                 vendorName: { equal: Acme }
           relationship: dependancy
 
-  tosca.nodes.RouterSoftware.Acme:
-    derived_from: tosca.nodes.RouterSoftware
+  TMForum.IGxxxx.nodes.RouterSoftware.Acme:
+    derived_from: TMForum.IGxxxx.nodes.RouterSoftware
 
-  tosca.nodes.Acme.Router.1000Series:
-    derived_from: tosca.nodes.ModularRouter
+  TMForum.IGxxxx.nodes.Acme.Router.1000Series:
+    derived_from: TMForum.IGxxxx.nodes.ModularRouter
 
   ###################
   # node types to add the advanced QoS feature
   ###################
 
-  tosca.nodes.PhysicalPort.OnCard.Acme.Advanced:
-    derived_from: tosca.nodes.PhysicalPort.OnCard.Acme
+  TMForum.IGxxxx.nodes.PhysicalPort.OnCard.Acme.Advanced:
+    derived_from: TMForum.IGxxxx.nodes.PhysicalPort.OnCard.Acme
     capabilities: 
       complexQoS:
         type: Acme.ComplexQosFeature
@@ -109,14 +109,14 @@ topology_template:
   node_templates:
 
     my_port:
-      type: tosca.nodes.PhysicalPort.OnCard.Acme.Advanced
+      type: TMForum.IGxxxx.nodes.PhysicalPort.OnCard.Acme.Advanced
       capabilities:
         complexQoS: 
           properties:
             enabled: True
 
     router:
-      type: tosca.nodes.Acme.Router.1000Series
+      type: TMForum.IGxxxx.nodes.Acme.Router.1000Series
       properties:
         property1: a
         property2: 1

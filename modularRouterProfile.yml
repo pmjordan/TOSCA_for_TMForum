@@ -22,7 +22,7 @@ node_types:
    ###################
   # node types for generic modular router
   ###################
-  tosca.nodes.ModularRouter:
+  TMForum.IGxxxx.nodes.ModularRouter:
     derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource
     properties:
       property1:
@@ -42,14 +42,14 @@ node_types:
           node: tosca.nodes.chassis
           relationship: dependancy
 
-  tosca.nodes.RouterSoftware:
+  TMForum.IGxxxx.nodes.RouterSoftware:
     derived_from: tosca.nodes.SoftwareComponent
     # TODO This probably maps to a SID SoftwareSpecification so resolve how to derive SID entity and tosca node
     requirements:
       - host: 
           node: tosca.nodes.Compute.NetworkDevice
 
-  tosca.nodes.Compute.NetworkDevice:
+  TMForum.IGxxxx.nodes.Compute.NetworkDevice:
     derived_from: tosca.nodes.Compute
     description: provides level of indirection between SoftwareComponent and Processor-card
     # TODO Level of indirection probably maps to a SID PhysicalBlackBoxSpec so resolve how to derive SID entity and tosca node
@@ -58,14 +58,14 @@ node_types:
           node: tosca.nodes.processor_card
           relationship: dependancy
 
-  tosca.nodes.processor_card:
+  TMForum.IGxxxx.nodes.processor_card:
     derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
     requirements:
       - slot:
           node: tosca.nodes.slot
           relationship: dependancy
 
-  tosca.nodes.PhysicalPort.OnCard:
+  TMForum.IGxxxx.nodes.PhysicalPort.OnCard:
     derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.PhysicalPort
     requirements:
       - router_software:
@@ -75,20 +75,20 @@ node_types:
           node: tosca.nodes.port_card
           relationship: dependancy
 
-  tosca.nodes.port_card:
+  TMForum.IGxxxx.nodes.port_card:
     derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
     requirements:
       - slot:
           node: tosca.nodes.slot
           relationship: dependancy
 
-  tosca.nodes.slot:
+  TMForum.IGxxxx.nodes.slot:
     derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder
     requirements:
       - chassis:
           node: tosca.nodes.chassis
           relationship: dependancy
 
-  tosca.nodes.chassis:
+  TMForum.IGxxxx.nodes.chassis:
       derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment      
  
