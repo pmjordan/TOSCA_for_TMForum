@@ -1,0 +1,133 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+####################
+capability_types:
+####################
+
+  ##################
+  # Capabilities to implement SID 
+  ####################
+
+  tosca.capabilities.PhysicalResourceSpecAttributes:
+    descripton: Equates to tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceSpecificationABE.PhysicalResourceSpecificationABE.PhysicalResourceSpecAttributes
+    # No need to use an inheritance tree for this as it contains no inherited attributes. No harm in doing so if it makes sense for automated mapping but for now derive from root
+    derived_from: tosca.capabilities.Root
+    properties:
+      modelNumber:
+        type: string 
+        required: True
+      vendorName:
+        type: string
+        required: True
+    attributes:
+    # These are listed as attributes because they are read only; not because they are optional
+      skuNumber:
+        type: string
+        required: False
+      partNumber:
+        type: string
+        required: False
+
+####################
+node_types:
+####################
+
+  ###################
+  # node types from SID model
+  ###################
+  
+  tosca.nodes.TMForum:
+    derived_from: tosca.nodes.Root
+
+  tosca.nodes.TMForum.Models:
+    derived_from: tosca.nodes.TMForum
+  
+  tosca.nodes.TMForum.Models.SIDModels:
+    derived_from: tosca.nodes.TMForum.Models
+    properties:
+      # mapping examples of those attributes of SID RootEntity which are not relationships and are not read only to TOSCA properties
+      # JSON and therefore YAML and TOSCA does not have a syntax to declare that an attribute must be unique and so that (and
+      # possibly other) aspect of the SID defintion is lost when mapping to TOSCA
+      description:
+        type: string
+        required: False
+        description: This is a string, and defines a textual identifier of an object
+      name:
+        type: string
+        description: Represents a user-friendly identifier of an object...
+        required: False
+    attributes:
+    # If there were any SID read only attributes they would be mapped to TOSCA attributes here
+      
+  tosca.nodes.TMForum.Models.SIDModels.ResourceDomain:
+    derived_from: tosca.nodes.TMForum.Models.SIDModels
+    
+  tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE:
+    derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain
+    
+  tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.CompoundResourceABE:
+    derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE
+    
+  tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource:
+    derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.CompoundResourceABE
+  
+  tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource:
+    description: Equates to PhysicalResourceSpec in TM Forum Information Model (SID)
+    derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE
+    # In SID a PhysicalResourceSpec has a 1 : 0..1 releation to PhysicalResourceAttributes
+    # To model this in TOSCA we have these choices:
+    # 1 use capability
+      # We use this option
+    # 2 use requirements: - dependency: capability
+      # This places a requirement on node instances derived from this spec that they MUST instantiate a node with the capabiliies defined in PhysicalResourceAttributes
+      # which is not what we want
+    # 3 use requirements: - dependency: node
+      # This places a requirement on node instances derived from this spec that they MUST instantiate a node with the type PhysicalResourceAttributes
+      # which is not what we want
+    # 4 Flatten the SID and add the attributes in this node
+      # this validates but
+        # loses the fact that if partNumber is present then vendorName must also be present 
+        # attributes: 
+        #   modelNumber:
+        #     type: string
+        #     required: false
+        #   vendorName:
+        #     type: string
+        #     required: true
+        #   skuNumber:
+        #     type: string
+        #     required: false
+        #   partNumber:
+        #     type: string
+        #   required: true
+    # 5 Make two node defintions, one with and one without the extension
+      # but that doubles the number of child entities
+    # 6 Use capability but to a new intermediate node type
+      # Does not seem to add anything helpful
+    capabilities:
+      PhysicalResourceSpecFurtherExtendedBy:
+        type: tosca.capabilities.PhysicalResourceSpecAttributes
+    
+  tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware:
+    derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource
+
+  tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.PhysicalPort:
+    derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware
+    capabilities:
+      # SID does not define the linkable capability but all tosca ports are linkable
+      link:
+        type: tosca.capabilities.network.Linkable
+   
+  tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware:
+    derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware
+
+  tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer:
+    derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware
+
+  tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment:
+    derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
+
+  tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card:
+    derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment
+
+  tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder:
+    derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
