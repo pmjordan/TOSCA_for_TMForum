@@ -12,19 +12,6 @@ capability_types:
 
 
 
-  ####################
-  # Capabilities to implement vendor specific features 
-  ####################
-
-  Acme.ComplexQosFeature:
-    derived_from: tosca.capabilities.Root
-    # TODO A capability probably maps to a SID (resource)function so resolve how to derive SID function from tosca capabilities
-    description: The ComplexQosFeature capability is an example of how a (vendor specific) feature, when included on a Node Type or Template defintion, indicates that the node can implement that feature
-    properties:
-      enabled:
-        type: boolean
-        required: False
-        default: False
 
 
 
