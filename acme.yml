@@ -38,7 +38,7 @@ node_types:
   # node types for Acme modular router
   ###################
 
-  TMForum.IGxxxx.nodes.port_card.Acme.1111:
+  Acme.1111:
   # We are going to use SID PhysicalResourceSpecFurtherExtendedBy in which both vendorName and modelNumber are mandatory
   # and so we derive ACME model 1111 directly from port_card rather than defining an Acme port_card and inheriting from that
     derived_from: TMForum.IGxxxx.nodes.port_card
@@ -54,7 +54,7 @@ node_types:
           #skuNumber: c
           #partNumber: d
 
-  TMForum.IGxxxx.nodes.processor_card.Acme.2222:
+  Acme.2222:
     derived_from: TMForum.IGxxxx.nodes.processor_card
     capabilities:
       # Including PhysicalResourceSpecFurtherExtendedBy as I want to specifiy the extended properties
@@ -83,10 +83,10 @@ node_types:
                 vendorName: { equal: Acme }
           relationship: dependancy
 
-  TMForum.IGxxxx.nodes.RouterSoftware.Acme:
+  RouterSoftware.Acme:
     derived_from: TMForum.IGxxxx.nodes.RouterSoftware
 
-  TMForum.IGxxxx.nodes.Acme.Router.1000Series:
+  Acme.Router.1000Series:
     derived_from: TMForum.IGxxxx.nodes.ModularRouter
 
   ###################
@@ -116,7 +116,7 @@ topology_template:
             enabled: True
 
     router:
-      type: TMForum.IGxxxx.nodes.Acme.Router.1000Series
+      type: Acme.Router.1000Series
       properties:
         property1: a
         property2: 1
