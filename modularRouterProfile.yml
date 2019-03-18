@@ -1,0 +1,107 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+
+imports:
+  - file: sid.yml
+
+
+
+####################
+capability_types:
+####################
+
+
+
+  ####################
+  # Capabilities to implement vendor specific features 
+  ####################
+
+  Acme.ComplexQosFeature:
+    derived_from: tosca.capabilities.Root
+    # TODO A capability probably maps to a SID (resource)function so resolve how to derive SID function from tosca capabilities
+    description: The ComplexQosFeature capability is an example of how a (vendor specific) feature, when included on a Node Type or Template defintion, indicates that the node can implement that feature
+    properties:
+      enabled:
+        type: boolean
+        required: False
+        default: False
+
+
+
+####################
+node_types:
+####################
+
+   ###################
+  # node types for generic modular router
+  ###################
+  tosca.nodes.ModularRouter:
+    derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource
+    properties:
+      property1:
+        type: string
+      property2:
+          type: integer
+    attributes:
+      attribute1:
+        type: float
+      attribute2:
+        type: boolean
+    requirements:
+      - router_software:
+          node: tosca.nodes.RouterSoftware
+          relationship: dependancy
+      - chassis:
+          node: tosca.nodes.chassis
+          relationship: dependancy
+
+  tosca.nodes.RouterSoftware:
+    derived_from: tosca.nodes.SoftwareComponent
+    # TODO This probably maps to a SID SoftwareSpecification so resolve how to derive SID entity and tosca node
+    requirements:
+      - host: 
+          node: tosca.nodes.Compute.NetworkDevice
+
+  tosca.nodes.Compute.NetworkDevice:
+    derived_from: tosca.nodes.Compute
+    description: provides level of indirection between SoftwareComponent and Processor-card
+    # TODO Level of indirection probably maps to a SID PhysicalBlackBoxSpec so resolve how to derive SID entity and tosca node
+    requirements:
+      - processor_card:
+          node: tosca.nodes.processor_card
+          relationship: dependancy
+
+  tosca.nodes.processor_card:
+    derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
+    requirements:
+      - slot:
+          node: tosca.nodes.slot
+          relationship: dependancy
+
+  tosca.nodes.PhysicalPort.OnCard:
+    derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.PhysicalPort
+    requirements:
+      - router_software:
+          node: tosca.nodes.RouterSoftware
+          relationship: dependancy
+      - port_card:
+          node: tosca.nodes.port_card
+          relationship: dependancy
+
+  tosca.nodes.port_card:
+    derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
+    requirements:
+      - slot:
+          node: tosca.nodes.slot
+          relationship: dependancy
+
+  tosca.nodes.slot:
+    derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder
+    requirements:
+      - chassis:
+          node: tosca.nodes.chassis
+          relationship: dependancy
+
+  tosca.nodes.chassis:
+      derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment      
+ 
