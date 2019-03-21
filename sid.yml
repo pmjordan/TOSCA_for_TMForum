@@ -68,7 +68,8 @@ node_types:
     derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE
   
   tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource:
-    description: Equates to PhysicalResourceSpec in TM Forum Information Model (SID)
+    description: >-
+      Equates to PhysicalResourceSpec in TM Forum Information Model (SID)
     derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE
     # In SID a PhysicalResourceSpec has a 1 : 0..1 releation to PhysicalResourceAttributes
     # To model this in TOSCA we have these choices:

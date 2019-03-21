@@ -104,7 +104,8 @@ node_types:
 
 
 ####################
-description: Template for physical router within a tosca node.network
+description: >-
+  Template for physical router within a tosca node.network
 topology_template:
 ####################
   node_templates:

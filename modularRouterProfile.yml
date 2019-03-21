@@ -50,7 +50,8 @@ node_types:
 
   org.tmforum.igxxxx.nodes.Compute.NetworkDevice:
     derived_from: tosca.nodes.Compute
-    description: provides level of indirection between SoftwareComponent and Processor-card
+    description: >-
+      provides level of indirection between SoftwareComponent and Processor-card
     # TODO Level of indirection probably maps to a SID PhysicalBlackBoxSpec so resolve how to derive SID entity and tosca node
     requirements:
       - processor_card:
