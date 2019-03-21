@@ -8,7 +8,7 @@ capability_types:
   ####################
 
   tosca.capabilities.PhysicalResourceSpecAttributes:
-    # Equates to tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceSpecificationABE.PhysicalResourceSpecificationABE.PhysicalResourceSpecAttributes
+    # Equates to tosca.nodes.tmforum.models.sidmodels.ResourceDomain.ResourceSpecificationABE.PhysicalResourceSpecificationABE.PhysicalResourceSpecAttributes
     # No need to use an inheritance tree for this as it contains no inherited attributes. No harm in doing so if it makes sense for automated mapping but for now derive from root
     derived_from: tosca.capabilities.Root
     properties:
@@ -32,14 +32,14 @@ node_types:
   # node types from SID model
   ###################
   
-  tosca.nodes.TMForum:
+  tosca.nodes.tmforum:
     derived_from: tosca.nodes.Root
 
-  tosca.nodes.TMForum.Models:
-    derived_from: tosca.nodes.TMForum
+  tosca.nodes.tmforum.models:
+    derived_from: tosca.nodes.tmforum
   
-  tosca.nodes.TMForum.Models.SIDModels:
-    derived_from: tosca.nodes.TMForum.Models
+  tosca.nodes.tmforum.models.sidmodels:
+    derived_from: tosca.nodes.tmforum.models
     properties:
       # mapping examples of those attributes of SID RootEntity which are not relationships and are not read only to TOSCA properties
       # JSON and therefore YAML and TOSCA does not have a syntax to declare that an attribute must be unique and so that (and
@@ -55,21 +55,21 @@ node_types:
     # attributes:
     # If there were any SID read only attributes they would be mapped to TOSCA attributes here
       
-  tosca.nodes.TMForum.Models.SIDModels.ResourceDomain:
-    derived_from: tosca.nodes.TMForum.Models.SIDModels
+  tosca.nodes.tmforum.models.sidmodels.ResourceDomain:
+    derived_from: tosca.nodes.tmforum.models.sidmodels
     
-  tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE:
-    derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain
+  tosca.nodes.tmforum.models.sidmodels.ResourceDomain.ResourceABE:
+    derived_from: tosca.nodes.tmforum.models.sidmodels.ResourceDomain
     
-  tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.CompoundResourceABE:
-    derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE
+  tosca.nodes.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE:
+    derived_from: tosca.nodes.tmforum.models.sidmodels.ResourceDomain.ResourceABE
     
-  tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource:
-    derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.CompoundResourceABE
+  tosca.nodes.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource:
+    derived_from: tosca.nodes.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE
   
-  tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource:
+  tosca.nodes.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource:
     description: Equates to PhysicalResourceSpec in TM Forum Information Model (SID)
-    derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE
+    derived_from: tosca.nodes.tmforum.models.sidmodels.ResourceDomain.ResourceABE
     # In SID a PhysicalResourceSpec has a 1 : 0..1 releation to PhysicalResourceAttributes
     # To model this in TOSCA we have these choices:
     # 1 use capability
@@ -104,27 +104,27 @@ node_types:
       PhysicalResourceSpecFurtherExtendedBy:
         type: tosca.capabilities.PhysicalResourceSpecAttributes
     
-  tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware:
-    derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource
+  tosca.nodes.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware:
+    derived_from: tosca.nodes.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource
 
-  tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.PhysicalPort:
-    derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware
+  tosca.nodes.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.PhysicalPort:
+    derived_from: tosca.nodes.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware
     capabilities:
       # SID does not define the linkable capability but all tosca ports are linkable
       link:
         type: tosca.capabilities.network.Linkable
    
-  tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware:
-    derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware
+  tosca.nodes.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware:
+    derived_from: tosca.nodes.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware
 
-  tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer:
-    derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware
+  tosca.nodes.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer:
+    derived_from: tosca.nodes.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware
 
-  tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment:
-    derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
+  tosca.nodes.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment:
+    derived_from: tosca.nodes.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
 
-  tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card:
-    derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment
+  tosca.nodes.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card:
+    derived_from: tosca.nodes.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment
 
-  tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder:
-    derived_from: tosca.nodes.TMForum.Models.SIDModels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
+  tosca.nodes.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder:
+    derived_from: tosca.nodes.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
