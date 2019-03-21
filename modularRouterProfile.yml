@@ -6,7 +6,7 @@ repositories:
       URL where TMForum publsishes SID in TOSCA format
     url: https://www.tmforum.org/resources/standard/information-framework-sid-release-xx-x-tosca-format/
     credential:
-      user: memeber
+      user: member
       token: password
 
 
