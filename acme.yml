@@ -41,7 +41,7 @@ node_types:
   Acme.1111:
   # We are going to use SID PhysicalResourceSpecFurtherExtendedBy in which both vendorName and modelNumber are mandatory
   # and so we derive ACME model 1111 directly from port_card rather than defining an Acme port_card and inheriting from that
-    derived_from: tmforum.igxxxx.nodes.port_card
+    derived_from: org.tmforum.igxxxx.nodes.port_card
     capabilities:
       # Including PhysicalResourceSpecFurtherExtendedBy as I want to specifiy the extended properties
       PhysicalResourceSpecFurtherExtendedBy:
@@ -55,7 +55,7 @@ node_types:
           #partNumber: d
 
   Acme.2222:
-    derived_from: tmforum.igxxxx.nodes.processor_card
+    derived_from: org.tmforum.igxxxx.nodes.processor_card
     capabilities:
       # Including PhysicalResourceSpecFurtherExtendedBy as I want to specifiy the extended properties
       PhysicalResourceSpecFurtherExtendedBy:
@@ -68,14 +68,14 @@ node_types:
           #skuNumber: c
           #partNumber: d
 
-  tmforum.igxxxx.nodes.PhysicalPort.OnCard.Acme:
-    derived_from: tmforum.igxxxx.nodes.PhysicalPort.OnCard
+  org.tmforum.igxxxx.nodes.PhysicalPort.OnCard.Acme:
+    derived_from: org.tmforum.igxxxx.nodes.PhysicalPort.OnCard
     requirements:
       - router_software:
           # This is one way of specifying the dependancy is on type of Acme
-          node: tmforum.igxxxx.nodes.RouterSoftware.Acme
+          node: org.tmforum.igxxxx.nodes.RouterSoftware.Acme
       - port_card:
-          node: tmforum.igxxxx.nodes.port_card
+          node: org.tmforum.igxxxx.nodes.port_card
           # This is maybe another way of specifying the dependancy is on type of Acme but fails validation
           # TODO resolve or remove
           # node_filter:
@@ -85,17 +85,17 @@ node_types:
           # relationship: dependancy
 
   RouterSoftware.Acme:
-    derived_from: tmforum.igxxxx.nodes.RouterSoftware
+    derived_from: org.tmforum.igxxxx.nodes.RouterSoftware
 
   Acme.Router.1000Series:
-    derived_from: tmforum.igxxxx.nodes.ModularRouter
+    derived_from: org.tmforum.igxxxx.nodes.ModularRouter
 
   ###################
   # node types to add the advanced QoS feature
   ###################
 
-  tmforum.igxxxx.nodes.PhysicalPort.OnCard.Acme.Advanced:
-    derived_from: tmforum.igxxxx.nodes.PhysicalPort.OnCard.Acme
+  org.tmforum.igxxxx.nodes.PhysicalPort.OnCard.Acme.Advanced:
+    derived_from: org.tmforum.igxxxx.nodes.PhysicalPort.OnCard.Acme
     capabilities: 
       complexQoS:
         type: Acme.ComplexQosFeature
@@ -110,7 +110,7 @@ topology_template:
   node_templates:
 
     my_port:
-      type: tmforum.igxxxx.nodes.PhysicalPort.OnCard.Acme.Advanced
+      type: org.tmforum.igxxxx.nodes.PhysicalPort.OnCard.Acme.Advanced
       capabilities:
         complexQoS: 
           properties:

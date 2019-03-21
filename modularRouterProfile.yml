@@ -17,8 +17,8 @@ node_types:
    ###################
   # node types for generic modular router
   ###################
-  tmforum.igxxxx.nodes.ModularRouter:
-    derived_from: tosca.nodes.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource
+  org.tmforum.igxxxx.nodes.ModularRouter:
+    derived_from: tosca.nodesorg.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource
     properties:
       property1:
         type: string
@@ -33,22 +33,22 @@ node_types:
       - router_software:
           # TODO make the following capability more specific
           capability: tosca.capabilities.Root
-          node: tmforum.igxxxx.nodes.RouterSoftware
+          node: org.tmforum.igxxxx.nodes.RouterSoftware
           relationship: DependsOn
       - chassis:
           # TODO make the following capability more specific
           capability: tosca.capabilities.Root
-          node: tmforum.igxxxx.nodes.chassis
+          node: org.tmforum.igxxxx.nodes.chassis
           relationship: DependsOn
 
-  tmforum.igxxxx.nodes.RouterSoftware:
+  org.tmforum.igxxxx.nodes.RouterSoftware:
     derived_from: tosca.nodes.SoftwareComponent
     # TODO This probably maps to a SID SoftwareSpecification so resolve how to derive SID entity and tosca node
     requirements:
       - host: 
-          node: tmforum.igxxxx.nodes.Compute.NetworkDevice
+          node: org.tmforum.igxxxx.nodes.Compute.NetworkDevice
 
-  tmforum.igxxxx.nodes.Compute.NetworkDevice:
+  org.tmforum.igxxxx.nodes.Compute.NetworkDevice:
     derived_from: tosca.nodes.Compute
     description: provides level of indirection between SoftwareComponent and Processor-card
     # TODO Level of indirection probably maps to a SID PhysicalBlackBoxSpec so resolve how to derive SID entity and tosca node
@@ -56,50 +56,50 @@ node_types:
       - processor_card:
           # TODO make the following capability more specific
           capability: tosca.capabilities.Root
-          node: tmforum.igxxxx.nodes.processor_card
+          node: org.tmforum.igxxxx.nodes.processor_card
           relationship: DependsOn
 
-  tmforum.igxxxx.nodes.processor_card:
-    derived_from: tosca.nodes.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
+  org.tmforum.igxxxx.nodes.processor_card:
+    derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
     requirements:
       - slot:
           # TODO make the following capability more specific
           capability: tosca.capabilities.Root
-          node: tmforum.igxxxx.nodes.slot
+          node: org.tmforum.igxxxx.nodes.slot
           relationship: DependsOn
 
-  tmforum.igxxxx.nodes.PhysicalPort.OnCard:
-    derived_from: tosca.nodes.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.PhysicalPort
+  org.tmforum.igxxxx.nodes.PhysicalPort.OnCard:
+    derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.PhysicalPort
     requirements:
       - router_software:
           # TODO make the following capability more specific
           capability: tosca.capabilities.Root
-          node: tmforum.igxxxx.nodes.RouterSoftware
+          node: org.tmforum.igxxxx.nodes.RouterSoftware
           relationship: DependsOn
       - port_card:
           # TODO make the following capability more specific
           capability: tosca.capabilities.Root
-          node: tmforum.igxxxx.nodes.port_card
+          node: org.tmforum.igxxxx.nodes.port_card
           relationship: DependsOn
 
-  tmforum.igxxxx.nodes.port_card:
-    derived_from: tosca.nodes.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
+  org.tmforum.igxxxx.nodes.port_card:
+    derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card
     requirements:
       - slot:
           # TODO make the following capability more specific
           capability: tosca.capabilities.Root
-          node: tmforum.igxxxx.nodes.slot
+          node: org.tmforum.igxxxx.nodes.slot
           relationship: DependsOn
 
-  tmforum.igxxxx.nodes.slot:
-    derived_from: tosca.nodes.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder
+  org.tmforum.igxxxx.nodes.slot:
+    derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder
     requirements:
       - chassis:
           # TODO make the following capability more specific
           capability: tosca.capabilities.Root
-          node: tmforum.igxxxx.nodes.chassis
+          node: org.tmforum.igxxxx.nodes.chassis
           relationship: DependsOn
 
-  tmforum.igxxxx.nodes.chassis:
-      derived_from: tosca.nodes.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment      
+  org.tmforum.igxxxx.nodes.chassis:
+      derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment      
  
