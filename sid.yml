@@ -8,7 +8,8 @@ capability_types:
   ####################
 
   tosca.capabilities.PhysicalResourceSpecAttributes:
-    # Equates to tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceSpecificationABE.PhysicalResourceSpecificationABE.PhysicalResourceSpecAttributes
+    description: >-
+      Equates to tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceSpecificationABE.PhysicalResourceSpecificationABE.PhysicalResourceSpecAttributes
     # No need to use an inheritance tree for this as it contains no inherited attributes. No harm in doing so if it makes sense for automated mapping but for now derive from root
     derived_from: tosca.capabilities.Root
     properties:
