@@ -1,10 +1,19 @@
 tosca_definitions_version: tosca_simple_yaml_1_0
 
+repositories:
+  tmforum:
+    description: >-
+      URL where TMForum publsishes SID in TOSCA format
+    url: https://www.tmforum.org/resources/standard/information-framework-sid-release-xx-x-tosca-format/
+    credential:
+      user: memeber
+      token: password
+
 
 imports:
   - file: sid.yml
-
-
+  # would normally refer to external repository but for now it is local so comment it out
+  # - repository: tmforum
 
 ####################
 #capability_types:
