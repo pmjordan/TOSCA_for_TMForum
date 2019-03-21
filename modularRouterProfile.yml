@@ -27,7 +27,7 @@ node_types:
   # node types for generic modular router
   ###################
   org.tmforum.igxxxx.nodes.ModularRouter:
-    derived_from: tosca.nodesorg.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource
+    derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource
     properties:
       property1:
         type: string

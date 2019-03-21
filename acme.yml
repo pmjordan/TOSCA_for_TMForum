@@ -47,8 +47,12 @@ node_types:
       PhysicalResourceSpecFurtherExtendedBy:
         properties:
           # These are mandatory
-          modelNumber: "1111"
-          vendorName: Acme
+          modelNumber: #override
+            type: string
+            default: "1111"
+          vendorName: #override
+            type: string
+            default: "Acme"
         #attributes:
           # These would not normally be specified in a topology template
           #skuNumber: c
@@ -61,15 +65,32 @@ node_types:
       PhysicalResourceSpecFurtherExtendedBy:
         properties:
           # These are mandatory
-          modelNumber: "2222"
-          vendorName: Acme
+          modelNumber: #override
+            type: string
+            default: "1111"
+          vendorName: #override
+            type: string
+            default: "Acme"
         #attributes:
           # These would not normally be specified in a topology template
           #skuNumber: c
           #partNumber: d
 
+  org.tmforum.igxxxx.nodes.RouterSoftware.Acme:
+    derived_from: org.tmforum.igxxxx.nodes.RouterSoftware
+
   org.tmforum.igxxxx.nodes.PhysicalPort.OnCard.Acme:
     derived_from: org.tmforum.igxxxx.nodes.PhysicalPort.OnCard
+    capabilities:
+      PhysicalResourceSpecFurtherExtendedBy:
+        properties:
+          # These are mandatory
+          modelNumber: #override
+            type: string
+            default: "N/A"
+          vendorName: #override
+            type: string
+            default: "Acme"
     requirements:
       - router_software:
           # This is one way of specifying the dependancy is on type of Acme
