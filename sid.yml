@@ -26,6 +26,47 @@ capability_types:
         type: string
 
 ####################
+interface_types:
+  tosca.interfaces.node.lifecycle.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource.status:
+    derived_from: tosca.interfaces.Root
+    description: "Although all values from CompoundResource.status are included, only those which indicate a target resting state are likely to be used in a practical interface. 
+    e.g. Move to the OK state rather the move to the Initializing state
+    Note that values are strings not integers to comply with TOSCA format"
+    '0':
+      description: Unknown
+    '1':
+      description: OK
+    '2': 
+      description: Initializing
+    '3':
+      description: Starting
+    '4':
+      description: Paused
+    '5':
+      description: Stopping
+    '6':
+      description: Stopped
+    '7':
+      description: Degraded
+    '8':
+      description: Stressed
+    '9':
+      description: Predicted Failure
+    '10':
+      description: Error - General
+    '11':
+      description: Error - Non Recoverable
+    '12':
+      description: Not Installed or Not Present
+    '13':
+      description: In Maintenance
+    '14':
+      description: Unable To Contact
+    '15':
+      description: Lost Communications
+####################
+
+####################
 node_types:
 ####################
 
@@ -67,7 +108,36 @@ node_types:
     
   tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource:
     derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE
-  
+    attributes:
+      status:
+        type: integer
+        description: "This is an enumerated integer whose value indicates the current status of the object. The following values are defined:
+          0: Unknown
+          1: OK
+          2: Initializing
+          3: Starting
+          4: Paused
+          5: Stopping
+          6: Stopped
+          7: Degraded
+          8: Stressed
+          9: Predicted Failure
+          10: Error - General
+          11: Error - Non Recoverable
+          12: Not Installed or Not Present
+          13: In Maintenance
+          14: Unable To Contact
+          15: Lost Communications
+
+          Stopped indicates that the CompoundResource is known to still exist, but it is no longer operational. However, it has not failed.
+
+          Stressed indicates that the LogicalResource is functioning, but needs attention (e.g., it may be overheating, or overloaded in some way). This is similar to Predicted Failure, which indicates that this CompoundResource is functioning properly, but is predicting a failure in the near future.
+
+          In Maintenance indicates that this LogicalResource is being configured, maintained, or otherwise administered and is NOT available for service"
+    interfaces: 
+      status:
+        type: tosca.interfaces.node.lifecycle.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource.status 
+
   tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource:
     description: >-
       Equates to PhysicalResourceSpec in TM Forum Information Model (SID)
@@ -130,3 +200,5 @@ node_types:
 
   tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder:
     derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
+
+
