@@ -104,7 +104,7 @@ node_types:
       Standard:
         create: scripts/invoke_installation_job.sh
         configure: scripts/apply_day0_config.sh
-        # Note that there is no script here for set_paused, we could do so but in this example we assume that some external action occurs when we set the CompoundResoure status value
+        # Note that there is no script here for set_paused, we could do so but in this example we assume that some external action occurs when we set the CompoundResource status value
         # Note that there is no script here for stop for the same reasons
         delete: scripts/invoke_recovery_job.sh
 
