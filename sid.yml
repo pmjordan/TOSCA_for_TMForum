@@ -6,7 +6,7 @@ capability_types:
   ##################
   # Capabilities to implement SID 
   ####################
-
+        
   tosca.capabilities.PhysicalResourceSpecAttributes:
     description: >-
       Equates to tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceSpecificationABE.PhysicalResourceSpecificationABE.PhysicalResourceSpecAttributes
@@ -27,11 +27,31 @@ capability_types:
 
 ####################
 interface_types:
+
+  tosca.interfaces.node.lifecycle.lrStatus:
+    derived_from: tosca.interfaces.node.lifecycle.Standard
+    description: org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.lrStatus
+    unknown:
+      description: Unknown
+    error_degraded:
+      description: Degraded
+    error_stressed:
+      description: Stressed
+    error_predicted_failure:
+      description: Predicted Failure
+    error_non_recoverable:
+      description: Error - Non Recoverable
+    error_unable_to_connect:
+      description: Unable To Contact
+    error_lost_communications:
+      description: Lost Communications
+
   tosca.interfaces.node.lifecycle.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource.status:
     derived_from: tosca.interfaces.Root
-    description: "Although all values from CompoundResource.status are included, only those which indicate a target resting state are likely to be used in a practical interface. 
-    e.g. Move to the OK state rather the move to the Initializing state
-    Note that values are strings not integers to comply with TOSCA format"
+    description: org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource.status
+    # Although all values from CompoundResource.status are included, only those which indicate a target resting state are likely to be used in a practical interface. 
+    # e.g. Move to the OK state rather the move to the Initializing state
+    # Note that values are strings not integers to comply with TOSCA format
     '0':
       description: Unknown
     '1':
@@ -134,9 +154,44 @@ node_types:
           Stressed indicates that the LogicalResource is functioning, but needs attention (e.g., it may be overheating, or overloaded in some way). This is similar to Predicted Failure, which indicates that this CompoundResource is functioning properly, but is predicting a failure in the near future.
 
           In Maintenance indicates that this LogicalResource is being configured, maintained, or otherwise administered and is NOT available for service"
-    interfaces: 
-      status:
-        type: tosca.interfaces.node.lifecycle.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource.status 
+
+
+  tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE:
+    derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE
+
+  tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource:
+    attributes:
+      lrStatus:
+        type: integer
+        description: "This is an enumerated integer whose value indicates the current status of the object. The following values are defined:
+        0: Unknown
+        1: OK
+        2: Initializing
+        3: Starting
+        4: Paused
+        5: Stopping
+        6: Stopped
+        7: Degraded
+        8: Stressed
+        9: Predicted Failure
+        10: Error - General
+        11: Error - Non Recoverable
+        12: Not Installed or Not Present
+        13: In Maintenance
+        14: Unable To Contact
+        15: Lost Communications
+
+        Stopped indicates that the LogicalResource is known to still exist, but it is no longer operational. However, it has not failed.
+
+        Stressed indicates that the LogicalResource is functioning, but needs attention (e.g., it may be overheating, or overloaded in some way). This is similar to Predicted Failure, which indicates that this LogicalResource is functioning properly, but is predicting a failure in the near future.
+
+        In Maintenance indicates that this LogicalResource is being configured, maintained, or otherwise administered and is NOT available for service.
+
+        Unable To Contact indicates that the monitoring system has knowledge of this LogicalResource but has never been able to establish communications with it. In contrast, Lost Commmunications indicates that the LogicalResource has been contacted successfully in the past and is known to still exist; however, it is currently unreachable."
+    interfaces:
+      Standard:
+        type: tosca.interfaces.node.lifecycle.lrStatus
+
 
   tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource:
     description: >-
@@ -200,5 +255,6 @@ node_types:
 
   tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder:
     derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
+
 
 

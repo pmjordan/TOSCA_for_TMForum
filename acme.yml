@@ -121,14 +121,14 @@ topology_template:
 ####################
   node_templates:
 
-    my_port:
-      type: org.tmforum.igxxxx.nodes.PhysicalPort.OnCard.Acme.Advanced
-      capabilities:
-        complexQoS: 
-          properties:
-            enabled: True
+    # my_port:
+    #   type: org.tmforum.igxxxx.nodes.PhysicalPort.OnCard.Acme.Advanced
+    #   capabilities:
+    #     complexQoS: 
+    #       properties:
+    #         enabled: True
 
-    router:
+    my_router:
       type: Acme.Router.1000Series
       properties:
         property1: a
@@ -136,6 +136,17 @@ topology_template:
       attributes:
         attribute1: 2.0
         attribute2: true
+
+  workflows:
+    create_router:
+      steps:
+        install_router:
+          target: my_router
+          activities :
+            - set_state: starting
+            - call_operation: Standard.start
+            - set_state: started
+
 
 
     
