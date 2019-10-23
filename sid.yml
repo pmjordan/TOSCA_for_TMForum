@@ -30,60 +30,86 @@ interface_types:
 
   tosca.interfaces.node.lifecycle.lrStatus:
     derived_from: tosca.interfaces.node.lifecycle.Standard
-    description: org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.lrStatus
-    unknown:
-      description: Unknown
-    error_degraded:
-      description: Degraded
-    error_stressed:
-      description: Stressed
-    error_predicted_failure:
-      description: Predicted Failure
-    error_non_recoverable:
-      description: Error - Non Recoverable
-    error_unable_to_connect:
-      description: Unable To Contact
-    error_lost_communications:
-      description: Lost Communications
+    description: Provides TOSCA interface to org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.lrStatus
+    create:
+      description: '13: In Maintenance'
+    start:
+      description: '1: OK'
+    stop:
+      description: '6: Stopped'
+    delete:
+      description: '12: Not Installed or Not Present'
+
+    set_unknown:
+      description: '0: Unknown'
+
+    set_initializing:
+        description: '2: Initializing'
+    set_starting:
+        description: '3: Starting'
+    set_paused:
+        description: '4: Paused'
+    set_stopping:
+        description: '5: Stopping'
+
+    set_degraded:
+        description: '7: Degraded'
+    set_stressed:
+        description: '8: Stressed'
+    set_predicted_failure:
+        description: '9: Predicted Failure'
+    set_error_general:
+        description: '10: Error - General'
+    set_error_non_recoverable:
+        description: '11: Error - Non Recoverable'
+
+    set_unable_to_contact:
+        description: '14: Unable To Contact'
+    set_Lost_Communications:
+        description: '15: Lost Communications'
+
 
   tosca.interfaces.node.lifecycle.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource.status:
-    derived_from: tosca.interfaces.Root
+    derived_from: tosca.interfaces.node.lifecycle.Standard
     description: org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource.status
     # Although all values from CompoundResource.status are included, only those which indicate a target resting state are likely to be used in a practical interface. 
-    # e.g. Move to the OK state rather the move to the Initializing state
-    # Note that values are strings not integers to comply with TOSCA format
-    '0':
-      description: Unknown
-    '1':
-      description: OK
-    '2': 
-      description: Initializing
-    '3':
-      description: Starting
-    '4':
-      description: Paused
-    '5':
-      description: Stopping
-    '6':
-      description: Stopped
-    '7':
-      description: Degraded
-    '8':
-      description: Stressed
-    '9':
-      description: Predicted Failure
-    '10':
-      description: Error - General
-    '11':
-      description: Error - Non Recoverable
-    '12':
-      description: Not Installed or Not Present
-    '13':
-      description: In Maintenance
-    '14':
-      description: Unable To Contact
-    '15':
-      description: Lost Communications
+    # e.g. use the stop oeration not the set_stopping operation
+    create:
+      description: '13: In Maintenance'
+    start:
+      description: '1: OK'
+    stop:
+      description: '6: Stopped'
+    delete:
+      description: '12: Not Installed or Not Present'
+      
+    set_unknown:
+      description: '0: Unknown'
+
+    set_initializing:
+        description: '2: Initializing'
+    set_starting:
+        description: '3: Starting'
+    set_paused:
+        description: '4: Paused'
+    set_stopping:
+        description: '5: Stopping'
+
+    set_degraded:
+        description: '7: Degraded'
+    set_stressed:
+        description: '8: Stressed'
+    set_predicted_failure:
+        description: '9: Predicted Failure'
+    set_error_general:
+        description: '10: Error - General'
+    set_error_non_recoverable:
+        description: '11: Error - Non Recoverable'
+
+    set_unable_to_contact:
+        description: '14: Unable To Contact'
+    set_Lost_Communications:
+        description: '15: Lost Communications'
 ####################
 
 ####################
@@ -154,7 +180,9 @@ node_types:
           Stressed indicates that the LogicalResource is functioning, but needs attention (e.g., it may be overheating, or overloaded in some way). This is similar to Predicted Failure, which indicates that this CompoundResource is functioning properly, but is predicting a failure in the near future.
 
           In Maintenance indicates that this LogicalResource is being configured, maintained, or otherwise administered and is NOT available for service"
-
+    interfaces:
+      Standard:
+        type: tosca.interfaces.node.lifecycle.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource.status
 
   tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE:
     derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE

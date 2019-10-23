@@ -142,10 +142,35 @@ topology_template:
       steps:
         install_router:
           target: my_router
-          activities :
-            - set_state: starting
-            - call_operation: Standard.start
-            - set_state: started
+          activities:
+            - set_state: creating # This is a TOSCA Normative node state value
+            - call_operation: Standard.create #The Standard interface action of create 
+            - set_state: created # This is a TOSCA Normative node state value
+        configure_router:
+          target: my_router
+          activities:
+            - set_state: configuring # This is a TOSCA Normative node state value
+            - call_operation: Standard.configure #The Standard interface action of create 
+            - set_state: configured # This is a TOSCA Normative node state value
+    delete_router:
+      steps:
+        cost_out_routes:
+          target: my_router
+          activities:
+            - set_state: stopping
+            - call_operation: Standard.set_paused #  Use the extended lifecycle operation to tell orchestrator to set the SID entity LrStatus to a value of Paused. Which may invoke external actions 
+        shutdown_router:
+          target: my_router
+          activities:
+            - set_state: configured
+        recover_router:
+          target: my_router
+          activities:
+            - set_state: deleting
+            - call_operation: Standard.delete #The Standard interface action of create 
+            - set_state: initial
+
+
 
 
 

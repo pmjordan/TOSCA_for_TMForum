@@ -112,4 +112,3 @@ node_types:
 
   org.tmforum.igxxxx.nodes.chassis:
       derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment      
- 
