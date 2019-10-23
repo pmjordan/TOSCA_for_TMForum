@@ -100,6 +100,13 @@ node_types:
 
   Acme.Router.1000Series:
     derived_from: org.tmforum.igxxxx.nodes.ModularRouter
+    interfaces:
+      Standard:
+        create: scripts/invoke_installation_job.sh
+        configure: scripts/apply_day0_config.sh
+        # Note that there is no script here for set_paused, we could do so but in thsi example we assume that some external action occurs when we set the lrStatus value
+        # Note that there is no script here for stop for the same reasons
+        delete: scripts/invoke_recovery_job.sh
 
   ###################
   # node types to add the advanced QoS feature
@@ -150,7 +157,7 @@ topology_template:
           target: my_router
           activities:
             - set_state: configuring # This is a TOSCA Normative node state value
-            - call_operation: Standard.configure #The Standard interface action of create 
+            - call_operation: Standard.configure #The Standard interface action of configure 
             - set_state: configured # This is a TOSCA Normative node state value
     delete_router:
       steps:
@@ -158,16 +165,19 @@ topology_template:
           target: my_router
           activities:
             - set_state: stopping
-            - call_operation: Standard.set_paused #  Use the extended lifecycle operation to tell orchestrator to set the SID entity LrStatus to a value of Paused. Which may invoke external actions 
+            - call_operation: Standard.set_paused #Use the extended lifecycle operation to tell orchestrator to set the SID entity CompoundResource.status to a value of Paused. Which may invoke external actions 
+            # set_state not used here as stopping does not complete until the router is shutdown
+            # could do 'set_state: Paused' but is doesn't seem to have any value so in this example set_state values are limited to the normative node state values
         shutdown_router:
           target: my_router
           activities:
+            - call_operation: Standard.stop # Stop is a standard lifecycle but again setting CompoundResource.status to Stopped triggers any necessary external action
             - set_state: configured
         recover_router:
           target: my_router
           activities:
             - set_state: deleting
-            - call_operation: Standard.delete #The Standard interface action of create 
+            - call_operation: Standard.delete #The Standard interface action of delete 
             - set_state: initial
 
 
