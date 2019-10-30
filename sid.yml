@@ -7,13 +7,25 @@ data_types:
   ##################
   # data types to implement SID base types
   ####################
-  BaseTypesABE.Quantity: 
+  tosca.datatypes.Root.org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.BaseTypesABE.Quantity: 
     derived_from: tosca.datatypes.Root
     properties:  
       amount: 
-        type: string
-      units: 
         type: integer
+      units: 
+        type: string  
+
+  tosca.datatypes.Root.org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.BaseTypesABE.ReportingPeriod:
+    derived_from: string
+    constraints:
+      - valid_values:
+        - NA:
+        - R_15MN:
+        - R_1H:
+        - R_1MN R_1MN:
+        - R_24H R_24H:
+        - R_30MN R_30MN:
+        - R_5MN R_5MN:
 
 
 ####################
@@ -312,6 +324,8 @@ node_types:
     derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.ComputingandSoftwareABE.SoftwareResourceandSoftwareABE
     properties:
       pagingFileSizeCurrent:
-        type: BaseTypesABE.Quantity
+        type: tosca.datatypes.Root.org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.BaseTypesABE.Quantity
+      reportperiod:
+        type: tosca.datatypes.Root.org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.BaseTypesABE.ReportingPeriod
 
   

@@ -121,6 +121,7 @@ node_types:
     # Other Avanced features may be listed as subsequent capabilities
 
 
+
 ####################
 description: >-
   Template for physical router within a tosca node.network
@@ -134,6 +135,13 @@ topology_template:
     #     complexQoS: 
     #       properties:
     #         enabled: True
+    my_software:
+      type: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.ComputingandSoftwareABE.SoftwareResourceandSoftwareABE.InstalledSoftware
+      properties:
+        pagingFileSizeCurrent:
+          amount: 10
+          units: Mbytes
+        reportperiod: R_15MN
 
     my_router:
       type: Acme.Router.1000Series
@@ -143,6 +151,25 @@ topology_template:
       attributes:
         attribute1: 2.0
         attribute2: true
+
+    db_server:
+      type: tosca.nodes.Compute
+      capabilities:
+        # Host container properties
+        host:
+          properties:
+            num_cpus: 1 
+            disk_size: 10 GB
+            mem_size: 4096 MB
+        # Guest Operating System properties
+        os:
+          properties:
+            # host Operating System image properties
+            architecture: x86_64 
+            type: linux  
+            distribution: rhel  
+            version: 6.5  
+
 
   workflows:
     create_router:
