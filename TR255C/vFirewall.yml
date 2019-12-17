@@ -24,9 +24,10 @@ artifact_types:
 node_types:
   org.tmforum.tr255c.nodes.firewall:
     derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource
-    attributes:
+    properties:
       operating_system:
         type: string
+    attributes:
       max_traffic_processed_GBs_per_sec:
         type: integer
     requirements:
@@ -34,6 +35,9 @@ node_types:
           capability: tosca.capabilities.Root
           node: tosca.nodes.SoftwareComponent.networked
           relationship: DependsOn
+    capabilities:
+      CP1: Endpoint
+      CP14: Endpoint
 
   tosca.nodes.SoftwareComponent.networked:
     derived_from: tosca.nodes.SoftwareComponent
@@ -54,12 +58,11 @@ topology_template:
   node_templates:
     my_virtualFirewall:
       type: org.tmforum.tr255c.nodes.firewall
+      properties:
+        operating_system: { get_input: os_type  }
       requirements:
-        - core_software: SWI1
-            # # TODO make the following capability more specific
-            # capability: tosca.capabilities.Root
-            # node: tosca.nodes.SoftwareComponent.networked
-            # relationship: DependsOn
+        - core_software: 
+            node: SWI1
 
     SWI1:
       type: tosca.nodes.SoftwareComponent.networked
@@ -69,7 +72,21 @@ topology_template:
           user: myusername
           token: mypassword
       requirements:
-        - host: my_server
+        - host:
+            node: tosca.nodes.Compute
+            node_filter:
+              properties:
+                disk_size: 
+                  - greater_or_equal: 10 GB
+                num_cpus: 
+                  - greater_or_equal: 2
+                mem_size: 
+                  - greater_or_equal: 4 GB
+              capabilities:
+                os:
+                  properties:
+                    type: 
+                      - equal: { get_property: my_virtualFirewall, operating_system }
         - port: CP2
       interfaces:
         Standard:
@@ -78,21 +95,6 @@ topology_template:
         my_vm_image:
           file: images/fedora-18-x86_64.qcow2
           type: tosca.artifacts.Deployment.Image.VM.QCOW2
-
-    my_server:
-      type: Compute
-      capabilities:
-        host:
-          properties:
-            disk_size: 10 GB
-            num_cpus: { get_input: cpus  }
-            mem_size: 4 GB
-        os:
-          properties:
-            architecture: x86_64
-            type: linux
-            distribution: rhel 
-            version: 6.5
 
     CP2:
       type: tosca.nodes.network.Port
