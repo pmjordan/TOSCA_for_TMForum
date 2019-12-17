@@ -20,43 +20,49 @@ artifact_types:
   tosca.artifacts.Deployment.Image.VM.QCOW2:
     derived_from: tosca.artifacts.Deployment.Image.VM
     description: QCOW2 format
+    # an example of a real, but arbitary, deployable image type 
 
 node_types:
   org.tmforum.tr255c.nodes.firewall:
+    description: A type definition of the top level firewall entity from TR255B for use in TR255C
     derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource
+    # make it a compound resource so that it could be an appliance in the future
     properties:
       operating_system:
         type: string
+      # Assume that the user want to specify the operating system, rather than having it allocated and reported
     attributes:
       max_traffic_processed_GBs_per_sec:
         type: integer
+      # This attribute is defined in TR255B
     requirements:
       - core_software:
           capability: tosca.capabilities.Root
           node: tosca.nodes.SoftwareComponent.networked
           relationship: DependsOn
+      # The firewall always needs the core software
     capabilities:
       CP1: Endpoint
       CP14: Endpoint
+      # There are always these two external interfaces
 
   tosca.nodes.SoftwareComponent.networked:
     derived_from: tosca.nodes.SoftwareComponent
     description: A software component with ports
+    # Could have based this on SID softwareSpec but assume orchestrator is easier to implement if we base it on the TOSCA SoftwareComponent
+    # Need to derive a node type which is a software component but which has internal network ports 
     requirements:
     - port:
         capability: tosca.capabilities.network.Bindable
         node: tosca.nodes.network.Port
         relationship: tosca.relationships.network.BindsTo
-    capabilities:
-      externalconnection: 
-        type: tosca.capabilities.Endpoint
-        description: External connection endpoint
 
 topology_template:
   description: Virtual Firewall as described in TR255C
 
   node_templates:
     my_virtualFirewall:
+    # an instance of the TR255B firewall with no extra features
       type: org.tmforum.tr255c.nodes.firewall
       properties:
         operating_system: { get_input: os_type  }
@@ -72,6 +78,7 @@ topology_template:
           user: myusername
           token: mypassword
       requirements:
+      # Leave it to the orchestrator to find a server but specify the minimum requirements and the type of os specifed by the user as captured in my_virtualFirewall
         - host:
             node: tosca.nodes.Compute
             node_filter:
@@ -88,6 +95,8 @@ topology_template:
                     type: 
                       - equal: { get_property: my_virtualFirewall, operating_system }
         - port: CP2
+        # This is where we add the dependency on CP2
+        - port: CP13
       interfaces:
         Standard:
             create: my_vm_image
@@ -95,6 +104,17 @@ topology_template:
         my_vm_image:
           file: images/fedora-18-x86_64.qcow2
           type: tosca.artifacts.Deployment.Image.VM.QCOW2
+      # arbitary example of how to spin up this software
 
     CP2:
       type: tosca.nodes.network.Port
+      requirements:
+        - link: Link1
+
+    CP13:
+      type: tosca.nodes.network.Port
+      requirements:
+        - link: Link1
+
+    Link1:
+      type: tosca.nodes.network.Network
