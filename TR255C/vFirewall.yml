@@ -58,6 +58,7 @@ node_types:
         relationship: tosca.relationships.network.BindsTo
 
   SWI1:
+    # This is not a concrete class as it has no create artifact
     derived_from: tosca.nodes.SoftwareComponent.networked
     requirements:
       - CP2:
@@ -70,6 +71,7 @@ node_types:
           relationship: DependsOn
 
   SWI1_linux:
+    # This is a concrete class
     derived_from: SWI1
     interfaces:
         Standard:
@@ -80,6 +82,7 @@ node_types:
         type: tosca.artifacts.Deployment.Image.VM.QCOW2
 
   SWI1_windows:
+    # This is a concrete class
     derived_from: SWI1
     interfaces:
         Standard:
@@ -93,19 +96,20 @@ topology_template:
   description: Virtual Firewall as described in TR255C
 
   node_templates:
-    my_virtualFirewall_linux:
-      description: an instance of the TR255B firewall with no extra features on a Linux
-    # There would be another node_template for the firewall with no features on Windows platform
-    # There would also be additonal node templates to hold the recipe for each feature group on each operating system type
+    my_virtualFirewall:
+      description: an instance of the TR255B firewall with no extra features
+    # There would also be additonal node templates to hold the recipe for each feature group 
     # The type defintions section could be held in a separate file and shared by each of the different node templates
       type: org.tmforum.tr255c.nodes.firewall
       properties:
-        operating_system: linux
+        operating_system: { get_input: os_type }
       requirements:
         - core_software: 
-            node: my_SWI1
+            node: SWI1
+            # Orchestrator will choose an avilable SWI1 of whatever sub-class matches the requirements.
 
-    my_SWI1:
+
+    my_SWI1_linux:
       type: SWI1_linux
       properties:
         component_version: 1.0
@@ -128,7 +132,37 @@ topology_template:
                 os:
                   properties:
                     type: 
-                      - equal: { get_property: my_virtualFirewall, operating_system }
+                      - equal: { get_attribute: my_virtualFirewall, operating_system }
+                      # always evalutes to Linux here but allows copy and paste to the windows variant
+        - port: CP2
+        # This is where we add the dependency on CP2
+        - port: CP13
+
+    my_SWI1_windows:
+      type: SWI1_windows
+      properties:
+        component_version: 1.0
+        admin_credential:
+          user: myusername
+          token: mypassword
+      requirements:
+      # Leave it to the orchestrator to find a server but specify the minimum requirements and the type of os specifed by the user as captured in my_virtualFirewall
+        - host:
+            node: tosca.nodes.Compute
+            node_filter:
+              properties:
+                # Windows needs different hardware
+                disk_size: 
+                  - greater_or_equal: 100 GB
+                num_cpus: 
+                  - greater_or_equal: 4
+                mem_size: 
+                  - greater_or_equal: 40 GB
+              capabilities:
+                os:
+                  properties:
+                    type: 
+                      - equal: { get_attribute: my_virtualFirewall, operating_system }
         - port: CP2
         # This is where we add the dependency on CP2
         - port: CP13
@@ -138,11 +172,22 @@ topology_template:
       type: tosca.nodes.network.Port
       requirements:
         - link: Link1
+        - binding:
+            node: SWI1
+            # Only one SWI1 will be choose and so teh bind will be to that one
 
     CP13:
       type: tosca.nodes.network.Port
       requirements:
         - link: Link1
+        - binding: 
+            node: SWI1
 
     Link1:
       type: tosca.nodes.network.Network
+      properties:
+        ip_version: 4
+        cidr:
+        network_name:
+        start_ip:
+        end_ip:
