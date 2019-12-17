@@ -57,21 +57,56 @@ node_types:
         node: tosca.nodes.network.Port
         relationship: tosca.relationships.network.BindsTo
 
+  SWI1:
+    derived_from: tosca.nodes.SoftwareComponent.networked
+    requirements:
+      - CP2:
+          capability: tosca.capabilities.Node
+          node: tosca.nodes.network.Port
+          relationship: DependsOn
+      - CP14:
+          capability: tosca.capabilities.Node
+          node: tosca.nodes.network.Port
+          relationship: DependsOn
+
+  SWI1_linux:
+    derived_from: SWI1
+    interfaces:
+        Standard:
+          create: my_vm_image
+    artifacts:
+      my_vm_image:
+        file: images/fedora-18-x86_64.qcow2
+        type: tosca.artifacts.Deployment.Image.VM.QCOW2
+
+  SWI1_windows:
+    derived_from: SWI1
+    interfaces:
+        Standard:
+          create: my_vm_image
+    artifacts:
+      my_vm_image:
+        file: images/windows-10-x86_64.qcow2
+        type: tosca.artifacts.Deployment.Image.VM.QCOW2
+
 topology_template:
   description: Virtual Firewall as described in TR255C
 
   node_templates:
-    my_virtualFirewall:
-    # an instance of the TR255B firewall with no extra features
+    my_virtualFirewall_linux:
+      description: an instance of the TR255B firewall with no extra features on a Linux
+    # There would be another node_template for the firewall with no features on Windows platform
+    # There would also be additonal node templates to hold the recipe for each feature group on each operating system type
+    # The type defintions section could be held in a separate file and shared by each of the different node templates
       type: org.tmforum.tr255c.nodes.firewall
       properties:
-        operating_system: { get_input: os_type  }
+        operating_system: linux
       requirements:
         - core_software: 
-            node: SWI1
+            node: my_SWI1
 
-    SWI1:
-      type: tosca.nodes.SoftwareComponent.networked
+    my_SWI1:
+      type: SWI1_linux
       properties:
         component_version: 1.0
         admin_credential:
@@ -97,14 +132,7 @@ topology_template:
         - port: CP2
         # This is where we add the dependency on CP2
         - port: CP13
-      interfaces:
-        Standard:
-            create: my_vm_image
-      artifacts:
-        my_vm_image:
-          file: images/fedora-18-x86_64.qcow2
-          type: tosca.artifacts.Deployment.Image.VM.QCOW2
-      # arbitary example of how to spin up this software
+
 
     CP2:
       type: tosca.nodes.network.Port
