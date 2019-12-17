@@ -1,11 +1,40 @@
 tosca_definitions_version: tosca_simple_yaml_1_2
 description: This version of the example given TR255C 17.5.0 conformant to TOSCA simple profile 1.2 
+
+repositories:
+  tmforum:
+    description: >-
+      URL where TMForum publishes SID in TOSCA format
+    url: https://www.tmforum.org/resources/standard/information-framework-sid-release-xx-x-tosca-format/
+    credential:
+      user: member
+      token: password
+
+
+imports:
+  - file: ../sid.yml
+  # would normally refer to external repository but for now it is local so comment it out
+  # - repository: tmforum
+
 artifact_types:
   tosca.artifacts.Deployment.Image.VM.QCOW2:
     derived_from: tosca.artifacts.Deployment.Image.VM
     description: QCOW2 format
 
 node_types:
+  org.tmforum.tr255c.nodes.firewall:
+    derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource
+    attributes:
+      operating_system:
+        type: string
+      max_traffic_processed_GBs_per_sec:
+        type: integer
+    requirements:
+      - core_software:
+          capability: tosca.capabilities.Root
+          node: tosca.nodes.SoftwareComponent.networked
+          relationship: DependsOn
+
   tosca.nodes.SoftwareComponent.networked:
     derived_from: tosca.nodes.SoftwareComponent
     description: A software component with ports
@@ -19,25 +48,21 @@ node_types:
         type: tosca.capabilities.Endpoint
         description: External connection endpoint
 
-  tosca.nodes.SoftwareComponent.networked.two_external:
-    derived_from: tosca.nodes.SoftwareComponent.networked
-    description: A software component with ports and two endpoints
-    capabilities:
-      externalconnection_1: 
-        type: tosca.capabilities.Endpoint
-      externalconnection_2: 
-        type: tosca.capabilities.Endpoint
-
 topology_template:
-  description: Change this text to a valid description
-  outputs:
-    private_ip:
-      description: The private IP address of the deployed server instance.
-      value: { get_attribute: [my_server, private_address] }
+  description: Virtual Firewall as described in TR255C
 
-  node_templates: 
-    SW1:
-      type: tosca.nodes.SoftwareComponent.networked.two_external
+  node_templates:
+    my_virtualFirewall:
+      type: org.tmforum.tr255c.nodes.firewall
+      requirements:
+        - core_software: SWI1
+            # # TODO make the following capability more specific
+            # capability: tosca.capabilities.Root
+            # node: tosca.nodes.SoftwareComponent.networked
+            # relationship: DependsOn
+
+    SWI1:
+      type: tosca.nodes.SoftwareComponent.networked
       properties:
         component_version: 1.0
         admin_credential:
@@ -46,13 +71,6 @@ topology_template:
       requirements:
         - host: my_server
         - port: CP2
-      capabilities:
-        externalconnection_1:
-          properties:
-           port_name: CP1
-        externalconnection_2:
-          properties:
-           port_name: CP14
       interfaces:
         Standard:
             create: my_vm_image
