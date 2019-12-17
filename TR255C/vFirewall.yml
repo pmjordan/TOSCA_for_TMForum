@@ -1,0 +1,80 @@
+tosca_definitions_version: tosca_simple_yaml_1_2
+description: This version of the example given TR255C 17.5.0 conformant to TOSCA simple profile 1.2 
+artifact_types:
+  tosca.artifacts.Deployment.Image.VM.QCOW2:
+    derived_from: tosca.artifacts.Deployment.Image.VM
+    description: QCOW2 format
+
+node_types:
+  tosca.nodes.SoftwareComponent.networked:
+    derived_from: tosca.nodes.SoftwareComponent
+    description: A software component with ports
+    requirements:
+    - port:
+        capability: tosca.capabilities.network.Bindable
+        node: tosca.nodes.network.Port
+        relationship: tosca.relationships.network.BindsTo
+    capabilities:
+      externalconnection: 
+        type: tosca.capabilities.Endpoint
+        description: External connection endpoint
+
+  tosca.nodes.SoftwareComponent.networked.two_external:
+    derived_from: tosca.nodes.SoftwareComponent.networked
+    description: A software component with ports and two endpoints
+    capabilities:
+      externalconnection_1: 
+        type: tosca.capabilities.Endpoint
+      externalconnection_2: 
+        type: tosca.capabilities.Endpoint
+
+topology_template:
+  description: Change this text to a valid description
+  outputs:
+    private_ip:
+      description: The private IP address of the deployed server instance.
+      value: { get_attribute: [my_server, private_address] }
+
+  node_templates: 
+    SW1:
+      type: tosca.nodes.SoftwareComponent.networked.two_external
+      properties:
+        component_version: 1.0
+        admin_credential:
+          user: myusername
+          token: mypassword
+      requirements:
+        - host: my_server
+        - port: CP2
+      capabilities:
+        externalconnection_1:
+          properties:
+           port_name: CP1
+        externalconnection_2:
+          properties:
+           port_name: CP14
+      interfaces:
+        Standard:
+            create: my_vm_image
+      artifacts:
+        my_vm_image:
+          file: images/fedora-18-x86_64.qcow2
+          type: tosca.artifacts.Deployment.Image.VM.QCOW2
+
+    my_server:
+      type: Compute
+      capabilities:
+        host:
+          properties:
+            disk_size: 10 GB
+            num_cpus: { get_input: cpus  }
+            mem_size: 4 GB
+        os:
+          properties:
+            architecture: x86_64
+            type: linux
+            distribution: rhel 
+            version: 6.5
+
+    CP2:
+      type: tosca.nodes.network.Port
