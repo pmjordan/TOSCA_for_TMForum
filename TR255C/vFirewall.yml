@@ -1,16 +1,6 @@
 tosca_definitions_version: tosca_simple_yaml_1_2
 description: A TOSCA template of the firewall defined in TR255B for inclusion in TR255C R20.
 
-repositories:
-  tmforum:
-    description: >-
-      URL where TMForum publishes SID in TOSCA format
-    url: https://www.tmforum.org/resources/standard/information-framework-sid-release-xx-x-tosca-format/
-    credential:
-      user: member
-      token: password
-
-
 imports:
   - file: ../sid.yml
   # would normally refer to external repository but for now it is local so comment it out
@@ -23,7 +13,6 @@ data_types:
       - valid_values:
         - linux
         - windows
-
 
 artifact_types:
   tosca.artifacts.Deployment.Image.VM.QCOW2:
@@ -45,15 +34,15 @@ node_types:
         type: integer
       # This attribute is defined in TR255B, assume it is reported rather than a requirement
     requirements:
+      # The firewall always needs the core software
       - core_software:
           capability: tosca.capabilities.Root
           node: SWI1
           relationship: DependsOn
-      # The firewall always needs the core software
     capabilities:
+      # There are always these two external interfaces
       CP1: Endpoint
       CP14: Endpoint
-      # There are always these two external interfaces
 
   org.tmforum.tr255c.nodes.firewall.fg1:
     description: A type definition of firewall with FeatureGroup 1
@@ -110,10 +99,10 @@ node_types:
 
   SWI2:
     derived_from: tosca.nodes.SoftwareComponent.networked
-      interfaces:
-        Standard:
-          create: patch
-      requirements:
+    interfaces:
+      Standard:
+        create: patch
+    requirements:
       - CP2:
           capability: tosca.capabilities.Node
           node: tosca.nodes.network.Port
