@@ -1,0 +1,8 @@
+Link1:
+      type: tosca.nodes.network.Network
+      properties:
+        ip_version: 4
+        cidr:
+        network_name:
+        start_ip:
+        end_ip:

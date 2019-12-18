@@ -1,0 +1,369 @@
+description: ""
+nodeTemplates: {}
+groups: {}
+policies: {}
+inputs: {}
+outputs: {}
+workflows: {}
+substitution: null
+metadata: {}
+scriptNamespace:
+  concat:
+    origin: null
+    path: ""
+    sourcecode: |-
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 4.3.1
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 4.3.1
+
+      function evaluate() {
+        var a = [];
+        var length = arguments.length;
+        for (var i = 0; i < length; i++) {
+          var argument = arguments[i];
+          if (argument.$string !== undefined)
+            argument = argument.$string;
+          a.push(argument);
+        }
+        return a.join('');
+      }
+    nativeargumentindexes: []
+  equal:
+    origin: null
+    path: ""
+    sourcecode: |-
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.5.2
+
+      clout.exec('tosca.helpers');
+
+      function validate(v1, v2) {
+        if (arguments.length !== 2)
+          throw 'must have 1 argument';
+        return tosca.getComparable(v1) == tosca.getComparable(v2);
+      }
+    nativeargumentindexes:
+    - 0
+  get_artifact:
+    origin: null
+    path: ""
+    sourcecode: |-
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 4.8.1
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 4.8.1
+
+      function evaluate() {
+        return 'TODO';
+      }
+    nativeargumentindexes: []
+  get_attribute:
+    origin: null
+    path: ""
+    sourcecode: |-
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 4.5.1
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 4.5.1
+
+      clout.exec('tosca.helpers');
+
+      function evaluate(entity, attribute) {
+        var length = arguments.length;
+        if (length < 2)
+          throw 'must have at least 2 arguments';
+        var nodeTemplate = tosca.getNodeTemplate(entity);
+        var attributes = nodeTemplate.attributes;
+        if (!(attribute in attributes))
+          throw puccini.sprintf('attribute "%s" not found in "%s"', attribute, nodeTemplate.name);
+        var r = clout.coerce(attributes[attribute]);
+        for (var i = 2; i < length; i++)
+          r = r[arguments[i]];
+        return r;
+      }
+    nativeargumentindexes: []
+  get_input:
+    origin: null
+    path: ""
+    sourcecode: |-
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 4.4.1
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 4.4.1
+
+      clout.exec('tosca.helpers');
+
+      function evaluate(input) {
+        if (arguments.length !== 1)
+          throw 'must have 1 argument';
+        if (!tosca.isTosca(clout))
+          throw 'Clout is not TOSCA';
+        var inputs = clout.properties.tosca.inputs;
+        if (!(input in inputs))
+          throw puccini.sprintf('input "%s" not found', input);
+        var r = inputs[input];
+        r = clout.coerce(r);
+        return r;
+      }
+    nativeargumentindexes: []
+  get_nodes_of_type:
+    origin: null
+    path: ""
+    sourcecode: |-
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 4.7.1
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 4.7.1
+
+      clout.exec('tosca.helpers');
+
+      function evaluate(typeName) {
+        if (arguments.length !== 1)
+          throw 'must have 1 argument';
+        var names = [];
+        for (var name in clout.vertexes) {
+          var vertex = clout.vertexes[name];
+          if (tosca.isTosca(vertex))
+            names.push(vertex.properties.name);
+        }
+        return names;
+      }
+    nativeargumentindexes: []
+  get_operation_output:
+    origin: null
+    path: ""
+    sourcecode: |-
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 4.6.1
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 4.6.1
+
+      function evaluate() {
+        return 'TODO';
+      }
+    nativeargumentindexes: []
+  get_property:
+    origin: null
+    path: ""
+    sourcecode: |-
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 4.4.2
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 4.4.2
+
+      clout.exec('tosca.helpers');
+
+      function evaluate(entity, property) {
+        var length = arguments.length;
+        if (length < 2)
+          throw 'must have at least 2 arguments';
+        var nodeTemplate = tosca.getNodeTemplate(entity);
+        var properties = nodeTemplate.properties;
+        if (!(property in properties))
+          throw puccini.sprintf('property "%s" not found in "%s"', property, nodeTemplate.name);
+        var r = clout.coerce(properties[property]);
+        for (var i = 2; i < length; i++)
+          r = r[arguments[i]];
+        return r;
+      }
+    nativeargumentindexes: []
+  greater_or_equal:
+    origin: null
+    path: ""
+    sourcecode: |-
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.5.2
+
+      clout.exec('tosca.helpers');
+
+      function validate(v1, v2) {
+        if (arguments.length !== 2)
+          throw 'must have 1 argument';
+        return tosca.getComparable(v1) >= tosca.getComparable(v2);
+      }
+    nativeargumentindexes:
+    - 0
+  greater_than:
+    origin: null
+    path: ""
+    sourcecode: |-
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.5.2
+
+      clout.exec('tosca.helpers');
+
+      function validate(v1, v2) {
+        if (arguments.length !== 2)
+          throw 'must have 1 argument';
+        return tosca.getComparable(v1) > tosca.getComparable(v2);
+      }
+    nativeargumentindexes:
+    - 0
+  in_range:
+    origin: null
+    path: ""
+    sourcecode: |-
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.5.2
+
+      clout.exec('tosca.helpers');
+
+      function validate(v, lower, upper) {
+        if (arguments.length !== 3)
+          throw 'must have 2 arguments';
+        v = tosca.getComparable(v);
+        return (v >= tosca.getComparable(lower)) && (v <= tosca.getComparable(upper));
+      }
+    nativeargumentindexes:
+    - 0
+    - 1
+  length:
+    origin: null
+    path: ""
+    sourcecode: |-
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.5.2
+
+      function validate(v, length) {
+        if (arguments.length !== 2)
+          throw 'must have 1 argument';
+        if (v.$string !== undefined)
+          v = v.$string;
+        return v.length == length;
+      }
+    nativeargumentindexes: []
+  less_or_equal:
+    origin: null
+    path: ""
+    sourcecode: |-
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.5.2
+
+      clout.exec('tosca.helpers');
+
+      function validate(v1, v2) {
+        if (arguments.length !== 2)
+          throw 'must have 1 argument';
+        return tosca.getComparable(v1) <= tosca.getComparable(v2);
+      }
+    nativeargumentindexes:
+    - 0
+  less_than:
+    origin: null
+    path: ""
+    sourcecode: |-
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.5.2
+
+      clout.exec('tosca.helpers');
+
+      function validate(v1, v2) {
+        if (arguments.length !== 2)
+          throw 'must have 1 argument';
+        return tosca.getComparable(v1) < tosca.getComparable(v2);
+      }
+    nativeargumentindexes:
+    - 0
+  max_length:
+    origin: null
+    path: ""
+    sourcecode: |-
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.5.2
+
+      function validate(v, length) {
+        if (arguments.length !== 2)
+          throw 'must have 1 argument';
+        if (v.$string !== undefined)
+          v = v.$string;
+        return v.length <= length;
+      }
+    nativeargumentindexes: []
+  min_length:
+    origin: null
+    path: ""
+    sourcecode: |-
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.5.2
+
+      function validate(v, length) {
+        if (arguments.length !== 2)
+          throw 'must have 1 argument';
+        if (v.$string !== undefined)
+          v = v.$string;
+        return v.length >= length;
+      }
+    nativeargumentindexes: []
+  pattern:
+    origin: null
+    path: ""
+    sourcecode: |-
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.5.2
+
+      function validate(v, re) {
+        if (arguments.length !== 2)
+          throw 'must have 1 argument';
+        if (v.$string !== undefined)
+          v = v.$string;
+        return new RegExp('^' + re + '$').test(v);
+      }
+    nativeargumentindexes: []
+  schema:
+    origin: null
+    path: ""
+    sourcecode: |-
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.3
+
+      function validate() {
+        // TODO
+        return true;
+      }
+    nativeargumentindexes: []
+  token:
+    origin: null
+    path: ""
+    sourcecode: |-
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 4.3.3
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 4.3.2
+
+      function evaluate(v, separators, index) {
+        if (arguments.length !== 3)
+          throw 'must have 3 arguments';
+        if (v.$string !== undefined)
+          v = v.$string;
+        var s = v.split(new RegExp('[' + escape(separators) + ']'));
+        return s[index];
+      }
+
+      function escape(s) {
+        return s.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
+      }
+    nativeargumentindexes: []
+  tosca.coerce:
+    origin:
+      path: /tosca/simple/1.1
+      data: ""
+    path: internal:/tosca/common/1.0/js/coerce.js
+    sourcecode: ""
+    nativeargumentindexes: []
+  tosca.helpers:
+    origin:
+      path: /tosca/simple/1.1
+      data: ""
+    path: internal:/tosca/common/1.0/js/helpers.js
+    sourcecode: ""
+    nativeargumentindexes: []
+  tosca.resolve:
+    origin:
+      path: /tosca/simple/1.1
+      data: ""
+    path: internal:/tosca/common/1.0/js/resolve.js
+    sourcecode: ""
+    nativeargumentindexes: []
+  tosca.utils:
+    origin:
+      path: /tosca/simple/1.1
+      data: ""
+    path: internal:/tosca/common/1.0/js/utils.js
+    sourcecode: ""
+    nativeargumentindexes: []
+  valid_values:
+    origin: null
+    path: ""
+    sourcecode: |-
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.6.3
+      // [TOSCA-Simple-Profile-YAML-v1.2] @ 3.5.2
+
+      function validate(v) {
+        var values = Array.prototype.slice.call(arguments, 1);
+        return values.indexOf(v) !== -1;
+      }
+    nativeargumentindexes: []

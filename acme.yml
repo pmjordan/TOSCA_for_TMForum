@@ -120,6 +120,25 @@ node_types:
       
     # Other Avanced features may be listed as subsequent capabilities
 
+  ###################
+  # node types to illistrate other concepts
+  ###################
+
+  example.node.for.enumeration:
+    derived_from: tosca.nodes.Compute
+    properties:
+      somereportperiod:
+      # uses org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.BaseTypesABE.ReportingPeriod
+        type: string
+        constraints:
+        - valid_values:
+          - NA:
+          - R_15MN:
+          - R_1H:
+          - R_1MN R_1MN:
+          - R_24H R_24H:
+          - R_30MN R_30MN:
+          - R_5MN R_5MN:
 
 
 ####################
@@ -135,13 +154,10 @@ topology_template:
     #     complexQoS: 
     #       properties:
     #         enabled: True
-    my_software:
-      type: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.ComputingandSoftwareABE.SoftwareResourceandSoftwareABE.InstalledSoftware
+    my_example.node.for.enumeration:
+      type: example.node.for.enumeration
       properties:
-        pagingFileSizeCurrent:
-          amount: 10
-          units: Mbytes
-        reportperiod: R_15MN
+        somereportperiod: 1R_15MNxxxyy
 
     my_router:
       type: Acme.Router.1000Series

@@ -1,0 +1,7 @@
+os:
+          properties:
+            # host Operating System image properties
+            architecture: x86_64
+            type: linux 
+            distribution: rhel 
+            version: 6.5 
