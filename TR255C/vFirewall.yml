@@ -1,5 +1,5 @@
 tosca_definitions_version: tosca_simple_yaml_1_2
-description: This version of the example given TR255C 17.5.0 conformant to TOSCA simple profile 1.2 
+description: A TOSCA template of the firewall defined in TR255B for inclusion in TR255C R20.
 
 repositories:
   tmforum:
@@ -35,25 +35,35 @@ node_types:
   org.tmforum.tr255c.nodes.firewall:
     description: A type definition of the top level firewall entity from TR255B for use in TR255C
     derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource
-    # make it a compound resource so that it could be an appliance in the future
+    # make it a compound resource so that it could be an appliance or use our own physical components
     properties:
       operating_system:
         type: os_choice
-      # Assume that the user want to specify the operating system, rather than having it allocated and reported
+      # TR255B says user can choose the operating system
     attributes:
       max_traffic_processed_GBs_per_sec:
         type: integer
-      # This attribute is defined in TR255B
+      # This attribute is defined in TR255B, assume it is reported rather than a requirement
     requirements:
       - core_software:
           capability: tosca.capabilities.Root
-          node: tosca.nodes.SoftwareComponent.networked
+          node: SWI1
           relationship: DependsOn
       # The firewall always needs the core software
     capabilities:
       CP1: Endpoint
       CP14: Endpoint
       # There are always these two external interfaces
+
+  org.tmforum.tr255c.nodes.firewall.fg1:
+    description: A type definition of firewall with FeatureGroup 1
+    derived_from: org.tmforum.tr255c.nodes.firewall
+    # TR255B says FG1 depends on SWI2
+    requirements:
+      - filtering_software:
+          capability: tosca.capabilities.Root
+          node: SWI2
+          relationship: DependsOn
 
   tosca.nodes.SoftwareComponent.networked:
     derived_from: tosca.nodes.SoftwareComponent
@@ -67,8 +77,11 @@ node_types:
         relationship: tosca.relationships.network.BindsTo
 
   SWI1:
-    # This is not a concrete class as it has no create artifact
+    # This is an abstract class as it has no create artifact
     derived_from: tosca.nodes.SoftwareComponent.networked
+    interfaces:
+        Standard:
+          create: vm_image
     requirements:
       - CP2:
           capability: tosca.capabilities.Node
@@ -82,41 +95,75 @@ node_types:
   SWI1_linux:
     # This is a concrete class
     derived_from: SWI1
-    interfaces:
-        Standard:
-          create: my_vm_image
     artifacts:
-      my_vm_image:
-        file: images/fedora-18-x86_64.qcow2
+      vm_image:
+        file: images/fw-core-fedora-18-x86_64.qcow2
         type: tosca.artifacts.Deployment.Image.VM.QCOW2
 
   SWI1_windows:
     # This is a concrete class
     derived_from: SWI1
-    interfaces:
-        Standard:
-          create: my_vm_image
     artifacts:
-      my_vm_image:
-        file: images/windows-10-x86_64.qcow2
+      vm_image:
+        file: images/fw-core-windows-10-x86_64.qcow2
         type: tosca.artifacts.Deployment.Image.VM.QCOW2
+
+  SWI2:
+    derived_from: tosca.nodes.SoftwareComponent.networked
+      interfaces:
+        Standard:
+          create: patch
+      requirements:
+      - CP2:
+          capability: tosca.capabilities.Node
+          node: tosca.nodes.network.Port
+          relationship: DependsOn
+      - CP14:
+          capability: tosca.capabilities.Node
+          node: tosca.nodes.network.Port
+          relationship: DependsOn
+
+  SWI2_linux:
+    derived_from: SWI2
+    artifacts:
+      patch:
+        file: images/fw-filter-fedora-18-x86_64.diff
+        type: tosca.artifacts.Deployment
+
+  SWI2_windows:
+    derived_from: SWI2
+    artifacts:
+      patch:
+        file: images/fw-filter-windows-10-x86_64.diff
+        type: tosca.artifacts.Deployment
+  
+policy_types:
+  tosca.policy.placement.Colocate:
+    # This policy type is used in a TOSCA 1.3 example but not defined
+    derived_from: tosca.policies.Placement
+    properties:
+      affinity: 
+        type: string
+    targets:
+      - tosca.nodes.SoftwareComponent
 
 topology_template:
   description: Virtual Firewall as described in TR255C
 
   node_templates:
     my_virtualFirewall:
-      description: an instance of the TR255B firewall with no extra features
-    # There would also be additonal node templates to hold the recipe for each feature group 
+      description: an instance of the TR255B firewall with FG1
+    # There would also be additonal node templates to hold the recipe for the basic firewall each of the other feature group combinations
     # The type defintions section could be held in a separate file and shared by each of the different node templates
-      type: org.tmforum.tr255c.nodes.firewall
+      type: org.tmforum.tr255c.nodes.firewall.fg1
       properties:
         operating_system: { get_input: os_type }
       requirements:
         - core_software: 
             node: SWI1
             # Orchestrator will choose an avilable SWI1 of whatever sub-class matches the requirements.
-
+        - filtering_software:
+            node: SWI2
 
     my_SWI1_linux:
       type: SWI1_linux
@@ -160,7 +207,7 @@ topology_template:
             node: tosca.nodes.Compute
             node_filter:
               properties:
-                # Windows needs different hardware
+                # TR255B says that Windows needs different hardware 
                 disk_size: 
                   - greater_or_equal: 100 GB
                 num_cpus: 
@@ -173,8 +220,55 @@ topology_template:
                     type: 
                       - equal: { get_attribute: my_virtualFirewall, operating_system }
         - port: CP2
-        # This is where we add the dependency on CP2
         - port: CP13
+
+    my_SWI2_linux:
+      type: SWI2_linux
+      properties:
+        component_version: 1.0
+        admin_credential:
+          user: myusername
+          token: mypassword
+      requirements:
+      # TR255B says filtering adds compute but no extra stroage requirement
+        - host:
+            node: tosca.nodes.Compute
+            node_filter:
+              properties:
+                num_cpus: 
+                  - greater_or_equal: 4
+              capabilities:
+                os:
+                  properties:
+                    type: 
+                      - equal: { get_attribute: my_virtualFirewall, operating_system }
+                      # always evalutes to Linux here but allows copy and paste to the windows variant
+        - port: CP3
+        - port: CP4
+
+    my_SWI2_windows:
+      type: SWI2_windows
+      properties:
+        component_version: 1.0
+        admin_credential:
+          user: myusername
+          token: mypassword
+      requirements:
+      # TR255B says filtering adds compute but no extra stroage requirement
+        - host:
+            node: tosca.nodes.Compute
+            node_filter:
+              properties:
+                # TR255B says that Windows needs different hardware 
+                num_cpus: 
+                  - greater_or_equal: 6
+              capabilities:
+                os:
+                  properties:
+                    type: 
+                      - equal: { get_attribute: my_virtualFirewall, operating_system }
+        - port: CP3
+        - port: CP4
 
 
     CP2:
@@ -184,6 +278,20 @@ topology_template:
         - binding:
             node: SWI1
             # Only one SWI1 will be choosen and so the bind will be to that one
+
+    CP3:
+      type: tosca.nodes.network.Port
+      requirements:
+        - link: Link1
+        - binding:
+            node: SWI2
+
+    CP4:
+      type: tosca.nodes.network.Port
+      requirements:
+        - link: Link1
+        - binding:
+            node: SWI2
 
     CP13:
       type: tosca.nodes.network.Port
@@ -200,3 +308,17 @@ topology_template:
         network_name:
         start_ip:
         end_ip:
+
+  policies:
+    #TR225B says the components all run in the same host
+    keep_together_policy:
+      type: tosca.policy.placement.Colocate
+      description: Keep associated nodes (groups of nodes) based upon SoftwareComponent
+      properties:
+        affinity: tosca.nodes.SoftwareComponent
+      targets:
+        - my_SWI1_linux
+        - my_SWI1_windows
+        - my_SWI2_linux
+        - my_SWI2_windows
+
