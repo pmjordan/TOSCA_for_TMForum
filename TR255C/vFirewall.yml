@@ -16,6 +16,15 @@ imports:
   # would normally refer to external repository but for now it is local so comment it out
   # - repository: tmforum
 
+data_types:
+  os_choice:
+    derived_from: string
+    constraints:
+      - valid_values:
+        - linux
+        - windows
+
+
 artifact_types:
   tosca.artifacts.Deployment.Image.VM.QCOW2:
     derived_from: tosca.artifacts.Deployment.Image.VM
@@ -29,7 +38,7 @@ node_types:
     # make it a compound resource so that it could be an appliance in the future
     properties:
       operating_system:
-        type: string
+        type: os_choice
       # Assume that the user want to specify the operating system, rather than having it allocated and reported
     attributes:
       max_traffic_processed_GBs_per_sec:
@@ -174,7 +183,7 @@ topology_template:
         - link: Link1
         - binding:
             node: SWI1
-            # Only one SWI1 will be choose and so teh bind will be to that one
+            # Only one SWI1 will be choosen and so the bind will be to that one
 
     CP13:
       type: tosca.nodes.network.Port
