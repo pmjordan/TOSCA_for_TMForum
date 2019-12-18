@@ -142,7 +142,7 @@ topology_template:
   node_templates:
     my_virtualFirewall:
       description: an instance of the TR255B firewall with FG1
-    # There would also be additonal node templates to hold the recipe for the basic firewall each of the other feature group combinations
+    # There would also be additonal node templates to hold the recipe for the basic firewall and each of the other feature group combinations
     # The type defintions section could be held in a separate file and shared by each of the different node templates
       type: org.tmforum.tr255c.nodes.firewall.fg1
       properties:
@@ -259,7 +259,6 @@ topology_template:
         - port: CP3
         - port: CP4
 
-
     CP2:
       type: tosca.nodes.network.Port
       requirements:
@@ -310,4 +309,3 @@ topology_template:
         - my_SWI1_windows
         - my_SWI2_linux
         - my_SWI2_windows
-
