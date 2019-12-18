@@ -11,4 +11,4 @@ sid.yml contains the SID extentions to TOSCA
 modularRouterProfile.yml contains an generic router profile 
 and acme.yml which contains vendor specific extentions of them.
 
-Also a TOSCA represenation of a firewall(TR255/vFirewall.yml) in for use in TR255C
+Also a [TOSCA representation of a firewall](TR255/vFirewall.yml) in for use in TR255C
