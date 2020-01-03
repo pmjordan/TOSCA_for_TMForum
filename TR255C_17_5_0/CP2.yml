@@ -1,5 +1,0 @@
-CP2:
-      type: tosca.nodes.network.Port
-      requirements:
-        - binding: my_server
-        - link: link1
