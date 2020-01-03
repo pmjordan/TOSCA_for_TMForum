@@ -1,4 +1,4 @@
-tosca_definitions_version: tosca_simple_yaml_1_2
+tosca_definitions_version: tosca_simple_yaml_1_3
 description: A TOSCA template of the firewall defined in TR255B for inclusion in TR255C R20.
 
 imports:
@@ -34,6 +34,7 @@ node_types:
         type: integer
       # This attribute is defined in TR255B, assume it is reported rather than a requirement so that it appears as an example of attribute rather than property
       # TOSCA 1.3 would allow this to be defined as type: scalar_unit_bitrate but then the value would be reported in bits/sec but the requirement from TR255C is for GB per sec
+      # TODO - find a way to link to the MetricABE
     requirements:
       # According to TR255B, the firewall always needs the core software
       - core_software:
@@ -91,7 +92,7 @@ node_types:
     derived_from: tosca.nodes.SoftwareComponent.networked
     interfaces:
       Standard:
-        #operations:
+        operations:
           create: vm_image
     requirements:
       - CP2:
@@ -123,7 +124,7 @@ node_types:
     derived_from: tosca.nodes.SoftwareComponent.networked
     interfaces:
       Standard:
-        #operations:
+        operations:
           create: patch
     requirements:
       - CP2:
@@ -153,7 +154,7 @@ node_types:
     derived_from: tosca.nodes.SoftwareComponent.networked
     interfaces:
       Standard:
-        #operations:
+        operations:
           create: patch
     requirements:
       - CP5:
@@ -187,7 +188,7 @@ node_types:
     derived_from: tosca.nodes.SoftwareComponent.networked
     interfaces:
       Standard:
-        #operations:
+        operations:
           create: patch
     requirements:
       - CP8:
