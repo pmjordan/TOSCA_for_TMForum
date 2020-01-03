@@ -34,7 +34,7 @@ node_types:
         type: integer
       # This attribute is defined in TR255B, assume it is reported rather than a requirement
     requirements:
-      # The firewall always needs the core software
+      # According to TR255B, the firewall always needs the core software
       - core_software:
           capability: tosca.capabilities.Root
           node: SWI1
@@ -47,12 +47,32 @@ node_types:
   org.tmforum.tr255c.nodes.firewall.fg1:
     description: A type definition of firewall with FeatureGroup 1
     derived_from: org.tmforum.tr255c.nodes.firewall
-    # TR255B says FG1 depends on SWI2
+    # TR255B says FG1 depends on SWI2 and SWI4
     requirements:
       - filtering_software:
           capability: tosca.capabilities.Root
           node: SWI2
           relationship: DependsOn
+      - inspection_software:
+          capability: tosca.capabilities.Root
+          node: SWI4
+          relationship: DependsOn
+
+  org.tmforum.tr255c.nodes.firewall.fg2:
+    description: A type definition of firewall with FeatureGroup 2
+    derived_from: org.tmforum.tr255c.nodes.firewall
+    # TR255B says FG2 depends on SWI3 and SWI4
+    requirements:
+      - redirect_software:
+          capability: tosca.capabilities.Root
+          node: SWI3
+          relationship: DependsOn
+      - inspection_software:
+          capability: tosca.capabilities.Root
+          node: SWI4
+          relationship: DependsOn
+
+  # fg3, fg4 and fg5 ommitted for brevity
 
   tosca.nodes.SoftwareComponent.networked:
     derived_from: tosca.nodes.SoftwareComponent
@@ -125,6 +145,68 @@ node_types:
       patch:
         file: images/fw-filter-windows-10-x86_64.diff
         type: tosca.artifacts.Deployment
+
+  SWI3:
+    derived_from: tosca.nodes.SoftwareComponent.networked
+    interfaces:
+      Standard:
+        create: patch
+    requirements:
+      - CP5:
+          capability: tosca.capabilities.Node
+          node: tosca.nodes.network.Port
+          relationship: DependsOn
+      - CP6:
+          capability: tosca.capabilities.Node
+          node: tosca.nodes.network.Port
+          relationship: DependsOn
+      - CP7:
+          capability: tosca.capabilities.Node
+          node: tosca.nodes.network.Port
+          relationship: DependsOn
+
+  SWI3_linux:
+    derived_from: SWI3
+    artifacts:
+      patch:
+        file: images/fw-redirect-fedora-18-x86_64.diff
+        type: tosca.artifacts.Deployment
+
+  SWI3_windows:
+    derived_from: SWI3
+    artifacts:
+      patch:
+        file: images/fw-redirect-windows-10-x86_64.diff
+        type: tosca.artifacts.Deployment
+
+  SWI4:
+    derived_from: tosca.nodes.SoftwareComponent.networked
+    interfaces:
+      Standard:
+        create: patch
+    requirements:
+      - CP8:
+          capability: tosca.capabilities.Node
+          node: tosca.nodes.network.Port
+          relationship: DependsOn
+      - CP9:
+          capability: tosca.capabilities.Node
+          node: tosca.nodes.network.Port
+          relationship: DependsOn
+
+  SWI4_linux:
+    derived_from: SWI4
+    artifacts:
+      patch:
+        file: images/fw-filter-fedora-18-x86_64.diff
+        type: tosca.artifacts.Deployment
+
+  SWI4_windows:
+    derived_from: SWI4
+    artifacts:
+      patch:
+        file: images/fw-filter-windows-10-x86_64.diff
+        type: tosca.artifacts.Deployment
   
 policy_types:
   tosca.policy.placement.Colocate:
@@ -153,6 +235,8 @@ topology_template:
             # Orchestrator will choose an avilable SWI1 of whatever sub-class matches the requirements.
         - filtering_software:
             node: SWI2
+        - inspection_software:
+            node: SWI4
 
     my_SWI1_linux:
       type: SWI1_linux
@@ -259,6 +343,54 @@ topology_template:
         - port: CP3
         - port: CP4
 
+    my_SWI4_linux:
+      type: SWI4_linux
+      properties:
+        component_version: 1.0
+        admin_credential:
+          user: myusername
+          token: mypassword
+      requirements:
+      # TR255B says redirect requires variable compute, num_cpus but this topology_template is for a known FG (Fg1) so value is fixed in this context
+        - host:
+            node: tosca.nodes.Compute
+            node_filter:
+              properties:
+                num_cpus: 
+                  - greater_or_equal: 4
+              capabilities:
+                os:
+                  properties:
+                    type: 
+                      - equal: { get_attribute: my_virtualFirewall, operating_system }
+                      # always evalutes to Linux here but allows copy and paste to the windows variant
+        - port: CP8
+        - port: CP9
+
+    my_SWI4_windows:
+      type: SWI4_windows
+      properties:
+        component_version: 1.0
+        admin_credential:
+          user: myusername
+          token: mypassword
+      requirements:
+      # TR255B says redirect requires variable compute, num_cpus but this topology_template is for a known FG (Fg1) so value is fixed in this context
+        - host:
+            node: tosca.nodes.Compute
+            node_filter:
+              properties:
+                # TR255B says that Windows needs different hardware 
+                num_cpus: 
+                  - greater_or_equal: 6
+              capabilities:
+                os:
+                  properties:
+                    type: 
+                      - equal: { get_attribute: my_virtualFirewall, operating_system }
+        - port: CP8
+        - port: CP9
+
     CP2:
       type: tosca.nodes.network.Port
       requirements:
@@ -280,6 +412,20 @@ topology_template:
         - link: Link1
         - binding:
             node: SWI2
+
+    CP8:
+      type: tosca.nodes.network.Port
+      requirements:
+        - link: Link1
+        - binding:
+            node: SWI4
+
+    CP9:
+      type: tosca.nodes.network.Port
+      requirements:
+        - link: Link1
+        - binding:
+            node: SWI4
 
     CP13:
       type: tosca.nodes.network.Port
@@ -309,3 +455,5 @@ topology_template:
         - my_SWI1_windows
         - my_SWI2_linux
         - my_SWI2_windows
+        - my_SWI4_linux
+        - my_SWI4_windows
