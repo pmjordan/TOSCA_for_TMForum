@@ -53,9 +53,11 @@ data_types:
     properties:
       startDateTime:
         description: An instant of time, starting at the TimePeriod Notes If null, then represents to the beginning of time
+        # Use of Null in SID is incompatible with teh TOSCA defintion of TimeStamp which we have adopted as a base data type and so Null cannot be used
         type: DateTime
       endDateTime:
         description: An instant of time, ending  at the TimePeriod Notes If null, If null, then represents to the end of time
+        # Use of Null in SID is incompatible with teh TOSCA defintion of TimeStamp which we have adopted as a base data type and so Null cannot be used
         type: DateTime
 
 ####################
