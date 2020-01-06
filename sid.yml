@@ -35,21 +35,27 @@ data_types:
     metadata:
       source: org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.BaseTypesABE.Quantity
       sid_release: '19.0'
-    properties:  
+    description: A base / value business entity used to represent measurements
+    properties: 
       amount: 
+        description: A quantity of something, typically the total of a thing or things in number, size, value, extent, or money.
         type: integer
-      units: 
-        type: string  
+      units:
+        description: The unit of measure for the quantity, such as meters, cubic yards, kilograms [ISO 80000], and the currency referring to [ISO 4217]
+        type: string
 
   TimePeriod:
     derived_from: tosca.datatypes.Root
     metadata:
       source: org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.BaseTypesABE.TimePeriod
       sid_release: '19.0'
+    description: A base / value business entity used to represent a period of time, between two timepoints
     properties:
       startDateTime:
+        description: An instant of time, starting at the TimePeriod Notes If null, then represents to the beginning of time
         type: DateTime
       endDateTime:
+        description: An instant of time, ending  at the TimePeriod Notes If null, If null, then represents to the end of time
         type: DateTime
 
 ####################
