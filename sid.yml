@@ -68,6 +68,7 @@ data_types:
     metadata:
       source: org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.MetricABE.MetricDefinition
       sid_release: '19.0'
+    description: A set of basic facts that defines, or specifies, what a metric is, such as its name, description, and so forth.
     properties:
       validFor:
         description: The period of time for which the use of the MetricDefinition is applicable
@@ -81,6 +82,12 @@ data_types:
       description:
         type: string
       _metricDefMeasure:
+      # The SID defintion for MetricDefinition contains a association to metricDefMeasure
+        # We can included the text of the association in meta data for readability is required
+        metadata:
+          association: MetricDefinitionMeasuredAccordingTo
+          # We can included the text of the association in meta data for readability is required
+        # The cardinality is 1 to many so represent this association as a list
         type: list
         entry_schema: MetricDefMeasure
         required: false
