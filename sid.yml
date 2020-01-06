@@ -7,31 +7,33 @@ data_types:
   ##################
   # data types to implement SID base types
   ####################
-  # tosca.datatypes.Root.org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.BaseTypesABE.ReportingPeriod:
-  #   derived_from: string
-  #   # properties:
-  #   #   ReportingPeriod:
-  #   #     type: string
-  #     constraints:
-  #       - valid_values:
-  #         - NA:
-  #         - R_15MN:
-  #         - R_1H:
-  #         - R_1MN R_1MN:
-  #         - R_24H R_24H:
-  #         - R_30MN R_30MN:
-  #         - R_5MN R_5MN:
+  ReportingPeriod:
+    # TOSCA 1.3 has a more powerful defintion; scalar-unit.time 
+    derived_from: string
+    metadata:
+      source: org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.BaseTypesABE.ReportingPeriod
+      sid_release: '19.0'
+    constraints:
+      - valid_values:
+        - NA:
+        - R_15MN:
+        - R_1H:
+        - R_1MN:
+        - R_24H:
+        - R_30MN:
+        - R_5MN:
   
   DateTime:
     derived_from: timestamp
     metadata:
+      source: org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.BaseTypesABE.DateTime
       sid_release: '19.0'
-      source: tosca.datatypes.Root.org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.BaseTypesABE.DateTime
-    description: Attach the TOSCA and YAML defintion for timestamp to the SID DataTime defintion which has no canonical format defintion 
+    description: Attach the TOSCA and YAML defintion for timestamp to the SID DataTime defintion which has no canonical format definition 
 
-  tosca.datatypes.Root.org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.BaseTypesABE.Quantity: 
+  Quantity:
     derived_from: tosca.datatypes.Root
     metadata:
+      source: org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.BaseTypesABE.Quantity
       sid_release: '19.0'
     properties:  
       amount: 
@@ -39,9 +41,10 @@ data_types:
       units: 
         type: string  
 
-  tosca.datatypes.Root.org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.BaseTypesABE.TimePeriod:
+  TimePeriod:
     derived_from: tosca.datatypes.Root
     metadata:
+      source: org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.BaseTypesABE.TimePeriod
       sid_release: '19.0'
     properties:
       startDateTime:
@@ -390,7 +393,7 @@ node_types:
       sid_release: '19.0'
     properties:
       pagingFileSizeCurrent:
-        type: tosca.datatypes.Root.org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.BaseTypesABE.Quantity
+        type: Quantity
 
 
   
