@@ -53,12 +53,75 @@ data_types:
     properties:
       startDateTime:
         description: An instant of time, starting at the TimePeriod Notes If null, then represents to the beginning of time
-        # Use of Null in SID is incompatible with teh TOSCA defintion of TimeStamp which we have adopted as a base data type and so Null cannot be used
+        # Use of Null in SID is incompatible with the TOSCA defintion of TimeStamp which we have adopted as a base data type and so Null cannot be used
         type: DateTime
       endDateTime:
         description: An instant of time, ending  at the TimePeriod Notes If null, If null, then represents to the end of time
-        # Use of Null in SID is incompatible with teh TOSCA defintion of TimeStamp which we have adopted as a base data type and so Null cannot be used
+        # Use of Null in SID is incompatible with the TOSCA defintion of TimeStamp which we have adopted as a base data type and so Null cannot be used
         type: DateTime
+
+  ##################
+  # data types to implement SID MetricABE as used in TR255 
+  ####################
+
+  MetricDefinition:
+    metadata:
+      source: org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.MetricABE.MetricDefinition
+      sid_release: '19.0'
+    properties:
+      validFor:
+        description: The period of time for which the use of the MetricDefinition is applicable
+        type: TimePeriod
+      ID:
+        description: A unique identifier for the MetricDefinition
+        type: string
+      name:
+        description: A word, term, or phrase by which a MetricDefinition is known and distinguished from other MetricDefinitions.
+        type: string
+      description:
+        type: string
+      _metricDefMeasure:
+        type: list
+        entry_schema: MetricDefMeasure
+        required: false
+        
+  MetricDefMeasure:
+    metadata:
+      source: org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.MetricABE.MetricDefinitionABE.MetricDefMeasure
+      sid_release: '19.0'
+    description: A MetricDefMeasure specifies a measure of a specific aspect of an entity, such as lost packets or dealer sales target achievement, defined for a MetricDefinition that may trigger consequence (s) (MetricDefMeasureConsequence) if a threshold (MetricDefMeasureThreshold) is crossed.
+    properties:
+      unitOfMeasure:
+        description: The unit of measure for the Metric values associated with a MetricDefMeasure, such as meters, cubic yards, kilograms [ISO 1000]
+        type: Quantity
+      accuracy:
+        description: The number of digits of accuracy captured for Metrics associated with a MetricDefMeasure.
+        type: integer
+        required: false
+      capturePeriod:
+        description: The period during which Metrics associated with a MetricDefMeasure are captured. Note This may be replaced by a set of entities similar to the Performance Monitoring ABEs.
+        type: TimePeriod
+      captureFrequency:
+        description: The frequency of capture for the MetricDefMeasure. Note This may be replaced by a set of entities similar to the Performance Monitoring ABEs
+        type: string
+        required: false
+      validFor:
+        description: The period for which the MetricDefMeasure is valid
+        type: TimePeriod
+        required: false
+      _metricMeasure:
+        type: list
+        entry_schema: MetricMeasure
+        required: false
+        
+  MetricMeasure:
+    metadata:
+      source: org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.MetricABE.MetricMeasureABE.MetricMeasure
+      sid_release: '19.0'
+    description: A numerical value or text determined for a MetricDefMeasure that may be collected for a RootEntity, such as a connection or a dealer. A MetricMeasure might be part of a group of MetricMeasures realized at a specific moment (MetricMeasureGroup). For example, a value of .005 ms that represents average packet delay
+    properties:
+      value:
+        type: string
 
 ####################
 capability_types:

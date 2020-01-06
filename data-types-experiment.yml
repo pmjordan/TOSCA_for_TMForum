@@ -167,6 +167,10 @@ data_types:
       accuracy:
         description: The number of digits of accuracy captured for Metrics associated with a MetricDefMeasure.
         type: integer
+      capturePeriod:
+        description: The period during which Metrics associated with a MetricDefMeasure are captured. Note This may be replaced by a set of entities similar to the Performance Monitoring ABEs.
+        type: TimePeriod
+      
       # TODO add more including link to MetricMeasureValue
 
 
@@ -199,8 +203,8 @@ topology_template:
       properties:
         throughput:
           validFor:
-            startDateTime: 2002-12-14
-            endDateTime: 2019-12-15T02:59:43.1Z
+            startDateTime: 0001-01-01
+            endDateTime: 9999-12-31
           ID: "123"
           name: throughput
           description: the instantaneous data rate
@@ -211,6 +215,9 @@ topology_template:
               # This means the metric is quantised in blocks of 1 Gbit/s; not that the current value is 1 Gbit/s
               units: Gbit/s
             accuracy: 1
+            capturePeriod: 
+              startDateTime: 2019-12-14T07:47:03Z
+              endDateTime: 9999-12-31
 
     data:
       type: DataNode
