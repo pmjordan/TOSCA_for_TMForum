@@ -7,16 +7,6 @@ data_types:
   ##################
   # data types to implement SID base types
   ####################
-  tosca.datatypes.Root.org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.BaseTypesABE.Quantity: 
-    derived_from: tosca.datatypes.Root
-    metadata:
-      sid_release: '19.0'
-    properties:  
-      amount: 
-        type: integer
-      units: 
-        type: string  
-
   # tosca.datatypes.Root.org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.BaseTypesABE.ReportingPeriod:
   #   derived_from: string
   #   # properties:
@@ -31,7 +21,33 @@ data_types:
   #         - R_24H R_24H:
   #         - R_30MN R_30MN:
   #         - R_5MN R_5MN:
+  
+  DateTime:
+    derived_from: timestamp
+    metadata:
+      sid_release: '19.0'
+      source: tosca.datatypes.Root.org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.BaseTypesABE.DateTime
+    description: Attach the TOSCA and YAML defintion for timestamp to the SID DataTime defintion which has no canonical format defintion 
 
+  tosca.datatypes.Root.org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.BaseTypesABE.Quantity: 
+    derived_from: tosca.datatypes.Root
+    metadata:
+      sid_release: '19.0'
+    properties:  
+      amount: 
+        type: integer
+      units: 
+        type: string  
+
+  tosca.datatypes.Root.org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.BaseTypesABE.TimePeriod:
+    derived_from: tosca.datatypes.Root
+    metadata:
+      sid_release: '19.0'
+    properties:
+      startDateTime:
+        type: DateTime
+      endDateTime:
+        type: DateTime
 
 ####################
 capability_types:
@@ -111,8 +127,9 @@ interface_types:
   tosca.interfaces.node.lifecycle.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource.status:
     derived_from: tosca.interfaces.node.lifecycle.Standard
     metadata:
+      source: org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource.status
       sid_release: '19.0'
-    description: org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource.status
+    description: This is an enumerated integer whose value indicates the current status of the object
     # Although all values from CompoundResource.status are included, only those which indicate a target resting state are likely to be used in a practical interface. 
     # e.g. use the stop oeration not the set_stopping operation
     operations:
