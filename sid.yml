@@ -61,8 +61,15 @@ data_types:
         type: DateTime
 
   ##################
-  # data types to implement SID MetricABE as used in TR255 
+  # data types to implement SID MetricABE
   ####################
+
+  # MetricABE is represented as a data type schema not a node type because the orchestrator is not required to instantiate Metric ABE entities (as it is for resource entities)
+  # The disadvantages are that 
+  # a) the MetricABE relationships are reduced to a single complex schema so the assocations can only be naviated a a single tree. Flattening the assoctions to create the tree is a descison made when creating sid.yml
+  # b) one the schema is used as an attribute everything inside it is a TOSCA attribute (and so read only) - may not be true consider how some SID attributes could eb properties and others attributes
+  # c) None of the values are available until run time.
+  # TODO How can this be expanded to include thresholds and consequences which can be read at design time? May need TOSCA spec changes to do this cleanly
 
   MetricDefinition:
     metadata:
@@ -102,7 +109,7 @@ data_types:
       sid_release: '19.0'
     description: A MetricDefMeasure specifies a measure of a specific aspect of an entity, such as lost packets or dealer sales target achievement, defined for a MetricDefinition that may trigger consequence (s) (MetricDefMeasureConsequence) if a threshold (MetricDefMeasureThreshold) is crossed.
     properties:
-      # Add defaults so that a template with no metric values passes validation
+      # Add defaults so that a template with no metric values passes validation. Not ideal for metrics as not present is different to zero
       unitOfMeasure:
         description: The unit of measure for the Metric values associated with a MetricDefMeasure, such as meters, cubic yards, kilograms [ISO 1000]
         type: Quantity

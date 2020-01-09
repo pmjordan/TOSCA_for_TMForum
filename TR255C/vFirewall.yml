@@ -5,6 +5,7 @@ imports:
   - file: ../sid.yml
   # would normally refer to external repository but for now it is local so comment it out
   # - repository: tmforum
+  # The content is a TOSCA encoding of selected SID information model entities as explained in IG1176
 
 data_types:
   os_choice:
@@ -31,10 +32,14 @@ node_types:
       # TR255B says user can choose the operating system
     attributes:
       max_traffic_processed_GBs_per_sec:
+        #type: integer
         type: integer
       # This attribute is defined in TR255B, assume it is reported rather than a requirement so that it appears as an example of attribute rather than property
-      # TOSCA 1.3 would allow this to be defined as type: scalar_unit_bitrate but then the value would be reported in bits/sec but the requirement from TR255C is for GB per sec
-      # TODO - find a way to link to the MetricABE
+      # There are some options here:
+      # Option 1 is the simple case - type: integer
+      # Option 2 is to use the TOSCA 1.3 feature - type: scalar_unit_bitrate but then the value would be reported in bits/sec and the requirement from TR255C is for GB per sec
+      # Option 3 is to use the full power of SID MetricABE - type: MetricDefinition . This is work in progress and may need TOSCA improvements for a clean solution.
+
     requirements:
       # According to TR255B, the firewall always needs the core software
       - core_software:
@@ -45,6 +50,7 @@ node_types:
       # There are always these two external interfaces
       CP1: Endpoint
       CP14: Endpoint
+
 
   org.tmforum.tr255c.nodes.firewall.fg1:
     description: A type definition of firewall with FeatureGroup 1
@@ -230,15 +236,15 @@ topology_template:
   node_templates:
     my_virtualFirewall:
       description: an instance of the TR255B firewall with FG1
-    # There would also be additonal node templates to hold the recipe for the basic firewall and each of the other feature group combinations
-    # The type defintions section could be held in a separate file and shared by each of the different node templates
+    # There would also be additional node templates to hold the recipe for the basic firewall and each of the other feature group combinations
+    # The type definitions section could be held in a separate file and shared by each of the different node templates
       type: org.tmforum.tr255c.nodes.firewall.fg1
       properties:
         operating_system: { get_input: os_type }
       requirements:
         - core_software: 
             node: SWI1
-            # Orchestrator will choose an avilable SWI1 of whatever sub-class matches the requirements.
+            # Orchestrator will choose an available SWI1 of whatever sub-class matches the requirements.
         - filtering_software:
             node: SWI2
         - inspection_software:
@@ -252,7 +258,7 @@ topology_template:
           user: myusername
           token: mypassword
       requirements:
-      # Leave it to the orchestrator to find a server but specify the minimum requirements and the type of os specifed by the user as captured in my_virtualFirewall
+      # Leave it to the orchestrator to find a server but specify the minimum requirements and the type of os specified by the user as captured in my_virtualFirewall
         - host:
             node: tosca.nodes.Compute
             node_filter:
@@ -268,7 +274,7 @@ topology_template:
                   properties:
                     type: 
                       - equal: { get_attribute: my_virtualFirewall, operating_system }
-                      # always evalutes to Linux here but allows copy and paste to the windows variant
+                      # always evaluates to Linux here but allows copy and paste to the windows variant
         - port: CP2
         # This is where we add the dependency on CP2
         - port: CP13
@@ -281,7 +287,7 @@ topology_template:
           user: myusername
           token: mypassword
       requirements:
-      # Leave it to the orchestrator to find a server but specify the minimum requirements and the type of os specifed by the user as captured in my_virtualFirewall
+      # Leave it to the orchestrator to find a server but specify the minimum requirements and the type of os specified by the user as captured in my_virtualFirewall
         - host:
             node: tosca.nodes.Compute
             node_filter:
@@ -309,7 +315,7 @@ topology_template:
           user: myusername
           token: mypassword
       requirements:
-      # TR255B says filtering adds compute but no extra stroage requirement
+      # TR255B says filtering adds compute but no extra storage requirement
         - host:
             node: tosca.nodes.Compute
             node_filter:
@@ -321,7 +327,7 @@ topology_template:
                   properties:
                     type: 
                       - equal: { get_attribute: my_virtualFirewall, operating_system }
-                      # always evalutes to Linux here but allows copy and paste to the windows variant
+                      # always evaluates to Linux here but allows copy and paste to the windows variant
         - port: CP3
         - port: CP4
 
@@ -369,7 +375,7 @@ topology_template:
                   properties:
                     type: 
                       - equal: { get_attribute: my_virtualFirewall, operating_system }
-                      # always evalutes to Linux here but allows copy and paste to the windows variant
+                      # always evaluates to Linux here but allows copy and paste to the windows variant
         - port: CP8
         - port: CP9
 
@@ -403,7 +409,7 @@ topology_template:
         - link: Link1
         - binding:
             node: SWI1
-            # Only one SWI1 will be choosen and so the bind will be to that one
+            # Only one SWI1 will be chosen and so the bind will be to that one
 
     CP3:
       type: tosca.nodes.network.Port
