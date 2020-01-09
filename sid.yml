@@ -73,14 +73,18 @@ data_types:
       validFor:
         description: The period of time for which the use of the MetricDefinition is applicable
         type: TimePeriod
+        required: false
       ID:
         description: A unique identifier for the MetricDefinition
         type: string
+        required: false
       name:
         description: A word, term, or phrase by which a MetricDefinition is known and distinguished from other MetricDefinitions.
         type: string
+        required: false
       description:
         type: string
+        required: false
       _metricDefMeasure:
       # The SID defintion for MetricDefinition contains a association to metricDefMeasure
         # We can included the text of the association in meta data for readability is required
@@ -98,9 +102,13 @@ data_types:
       sid_release: '19.0'
     description: A MetricDefMeasure specifies a measure of a specific aspect of an entity, such as lost packets or dealer sales target achievement, defined for a MetricDefinition that may trigger consequence (s) (MetricDefMeasureConsequence) if a threshold (MetricDefMeasureThreshold) is crossed.
     properties:
+      # Add defaults so that a template with no metric values passes validation
       unitOfMeasure:
         description: The unit of measure for the Metric values associated with a MetricDefMeasure, such as meters, cubic yards, kilograms [ISO 1000]
         type: Quantity
+        default:
+          amount: 0
+          units: unknown
       accuracy:
         description: The number of digits of accuracy captured for Metrics associated with a MetricDefMeasure.
         type: integer
@@ -108,6 +116,9 @@ data_types:
       capturePeriod:
         description: The period during which Metrics associated with a MetricDefMeasure are captured. Note This may be replaced by a set of entities similar to the Performance Monitoring ABEs.
         type: TimePeriod
+        default:
+          startDateTime: 1970-1-1
+          endDateTime: 1970-1-1
       captureFrequency:
         description: The frequency of capture for the MetricDefMeasure. Note This may be replaced by a set of entities similar to the Performance Monitoring ABEs
         type: string
