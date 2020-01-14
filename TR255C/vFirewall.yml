@@ -6,6 +6,7 @@ imports:
   # would normally refer to external repository but for now it is local so comment it out
   # - repository: tmforum
   # The content is a TOSCA encoding of selected SID information model entities as explained in IG1176
+    namespace_prefix: sid
 
 data_types:
   os_choice:
@@ -24,7 +25,7 @@ artifact_types:
 node_types:
   org.tmforum.tr255c.nodes.firewall:
     description: A type definition of the top level firewall entity from TR255B for use in TR255C
-    derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource
+    derived_from: sid:tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource
     # make it a compound resource so that it could be an appliance or use our own physical components
     properties:
       operating_system:

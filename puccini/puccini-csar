@@ -1,0 +1,108 @@
+#!/bin/bash
+set -e
+
+TOOL=$(basename "$0")
+
+TOSCA_META_FILE_VERSION=${TOSCA_META_FILE_VERSION:-1.0}
+CSAR_VERSION=${CSAR_VERSION:-1.1}
+CREATED_BY=${CREATED_BY:-$TOOL}
+
+if [ "$#" -lt 2 ]; then
+cat << EOT
+Simple TOSCA CSAR creation tool
+
+Usage:
+
+    $TOOL [CSAR file path] [archive directory ...]
+
+The current directory will be the root of the CSAR, so make sure to run this
+tool in the right place.
+
+Specify "." to archive the current directory. Note that you may specify more
+than one directory to add to your CSAR.
+
+Will automatically create and add a "TOSCA-Metadata/TOSCA.meta" file to the
+archive.
+
+You can set the "ENTRY_DEFINITIONS" environment variable to specify the path
+to your service template YAML file (relative to the root). Otherwise, if
+there's a single YAML file in the root it will be used automatically. If
+there's more than one YAML file in the root then you *must* explicitly set
+"ENTRY_DEFINITIONS".
+
+Other supported environment variables:
+
+    TOSCA_META_FILE_VERSION
+    CSAR_VERSION
+    CREATED_BY
+
+EOT
+	exit 1
+fi
+
+CSAR=$(readlink -f "$1")
+
+if [ -f "$CSAR" ]; then
+	echo "CSAR already exists, deleting: $CSAR"
+	rm "$CSAR"
+fi
+
+# Add all dirs to CSAR
+
+for D in "${@:2}"; do
+	if [ ! -d "$D" ]; then
+		echo "failed: not a directory: $D" > /dev/stderr
+		exit 1
+	fi
+	zip -9 --recurse-paths "$CSAR" "$D" > /dev/null
+done
+
+if [ -z "$ENTRY_DEFINITIONS" ]; then
+	# Find Entry-Definitions
+
+	IFS=$'\n'
+	for F in $(zipinfo -1 "$CSAR"); do
+		if [ "$(dirname "$F")" == . ]; then
+			EXT=${F##*.}
+			if [ "$EXT" == yaml ] || [ "$EXT" == yml ]; then
+				if [ -n "$ENTRY_DEFINITIONS" ]; then
+					echo 'failed: multiple YAML files in root, you must set ENTRY_DEFINITIONS in environment to choose one' > /dev/stderr
+					rm "$CSAR"
+					exit 1
+				fi
+				ENTRY_DEFINITIONS=$F
+			fi
+		fi
+	done
+fi
+
+echo "Entry-Definitions: $ENTRY_DEFINITIONS"
+
+# Metadata
+
+TEMP_ROOT=$(mktemp --directory)
+
+function the_end () {
+	local ERR=$?
+	rm --recursive "$TEMP_ROOT"
+	if [ "$ERR" == 0 ]; then
+		echo "CSAR created: $CSAR"
+	else
+		echo "failed" > /dev/stderr
+		exit $ERR
+	fi
+}
+
+trap the_end EXIT
+
+cd "$TEMP_ROOT"
+mkdir TOSCA-Metadata
+
+cat << EOT >> TOSCA-Metadata/TOSCA.meta
+TOSCA-Meta-File-Version: $TOSCA_META_FILE_VERSION
+CSAR-Version: $CSAR_VERSION
+Created-By: $CREATED_BY
+Entry-Definitions: $ENTRY_DEFINITIONS
+EOT
+
+zip -9 --recurse-paths "$CSAR" . > /dev/null

@@ -12,7 +12,7 @@ node_types:
 
   ResourceWithMetric:
     derived_from: Root
-    properties:
+    attributes:
       throughput:
         type: MetricDefinition
 
@@ -135,46 +135,6 @@ data_types:
       nested:
         type: Nested
 
-      
-  MetricDefinition:
-    metadata:
-      source: org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.MetricABE.MetricDefinition
-      sid_release: '19.0'
-    properties:
-      validFor:
-        description: The period of time for which the use of the MetricDefinition is applicable
-        type: TimePeriod
-      ID:
-        description: A unique identifier for the MetricDefinition
-        type: string
-      name:
-        description: A word, term, or phrase by which a MetricDefinition is known and distinguished from other MetricDefinitions.
-        type: string
-      description:
-        type: string
-      metricDefMeasure:
-        type: list
-        entry_schema: MetricDefMeasure
-        
-  MetricDefMeasure:
-    metadata:
-      source: org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.MetricABE.MetricDefinitionABE.MetricDefMeasure
-      sid_release: '19.0'
-    properties:
-      unitOfMeasure:
-        description: The unit of measure for the Metric values associated with a MetricDefMeasure, such as meters, cubic yards, kilograms [ISO 1000]
-        type: Quantity
-      accuracy:
-        description: The number of digits of accuracy captured for Metrics associated with a MetricDefMeasure.
-        type: integer
-      capturePeriod:
-        description: The period during which Metrics associated with a MetricDefMeasure are captured. Note This may be replaced by a set of entities similar to the Performance Monitoring ABEs.
-        type: TimePeriod
-      
-      # TODO add more including link to MetricMeasureValue
-
-
-
   Nested:
     # (Just to demonstrate, we won't derive from Root for this type; there's nothing there to inherit anyway)
     properties:
@@ -200,25 +160,43 @@ topology_template:
 
     MyResourceWithMetric:
       type: ResourceWithMetric
-      properties:
-        throughput:
-          validFor:
-            startDateTime: 0001-01-01
-            endDateTime: 9999-12-31
-          ID: "123"
-          name: throughput
-          description: the instantaneous data rate
-          metricDefMeasure:
-             #  Only one item in this list because throughput has only one dimension
-          - unitOfMeasure:
-              amount: 1
-              # This means the metric is quantised in blocks of 1 Gbit/s; not that the current value is 1 Gbit/s
-              units: Gbit/s
-            accuracy: 1
-            capturePeriod: 
-              startDateTime: 2019-12-14T07:47:03Z
-              endDateTime: 9999-12-31
-
+      # attributes:
+      #   throughput:
+          # validFor:
+          #   startDateTime: 0001-01-01
+          #   endDateTime: 9999-12-31
+          # ID: "123"
+          # name: throughput
+          # description: the instantaneous data rate
+          # _metricDefMeasure:
+          #    #  Only one item in this list because throughput has only one dimension
+          # - unitOfMeasure:
+          #     amount: 1
+          #     # This means the metric is quantised in blocks of 1 Gbit/s; not that the current value is 1 Gbit/s
+          #     units: Gbit/s
+          #   accuracy: 1
+          #   capturePeriod: 
+          #     startDateTime: 2020-01-06T14:00:03Z
+          #     endDateTime: 2020-01-06T14:05:03Z
+          #   captureFrequency: '5 min'
+          #   validFor:
+          #     startDateTime: 2020-01-06T14:05:03Z
+          #     endDateTime: 9999-12-31
+          #   _metricMeasure:
+          #      - value: '10'
+          # - unitOfMeasure:
+          #     amount: 1
+          #     units: Gbit/s
+          #   accuracy: 1
+          #   capturePeriod: 
+          #     startDateTime: 2020-01-06T14:05:03Z
+          #     endDateTime: 2020-01-06T14:10:03Z
+          #   captureFrequency: '5 min'
+          #   validFor:
+          #     startDateTime: 2020-01-06T14:10:03Z
+          #     endDateTime: 9999-12-31
+          #   _metricMeasure:
+          #      - value: '7'
     data:
       type: DataNode
       properties:
