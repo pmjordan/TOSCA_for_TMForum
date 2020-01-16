@@ -322,7 +322,13 @@ topology_template:
             node: tosca.nodes.Compute
             node_filter:
               properties:
-                num_cpus: 
+                num_cpus:
+                  # Here the additional compute is a static, pre-calculated, value. The requirements of TR255 may infer an expectation that the value is 
+                  # to be calculated.
+                  # To do so within TOSCA 1.3 would require use of a scaling notification and action
+                  # But it might be considered better to include the calulation in the template so that the result can be used on deployment. 
+                  # TOSCA 1.3 doesn't define any arithmetic functions so either the spec needs to be enhanced or use the non-standard extention found in puccini
+                  # to embed JavaScript in the TOSCA tempalate
                   - greater_or_equal: 4
               capabilities:
                 os:
