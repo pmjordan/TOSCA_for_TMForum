@@ -21,7 +21,7 @@ artifact_types:
   tosca.artifacts.Deployment.Image.VM.QCOW2:
     derived_from: tosca.artifacts.Deployment.Image.VM
     description: QCOW2 format
-    # an example of a real, but arbitary, deployable image type 
+    # an example of a real, but arbitrary, deployable image type 
 
 node_types:
   org.tmforum.tr255c.nodes.firewall:
@@ -82,7 +82,7 @@ node_types:
           node: SWI4
           relationship: DependsOn
 
-  # fg3, fg4 and fg5 ommitted for brevity. They are not required for feature group 2 which is used as the example in the topology template
+  # fg3, fg4 and fg5 omitted for brevity. They are not required for feature group 2 which is used as the example in the topology template
 
   tosca.nodes.SoftwareComponent.networked:
     derived_from: tosca.nodes.SoftwareComponent
@@ -326,9 +326,9 @@ topology_template:
                   # Here the additional compute is a static, pre-calculated, value. The requirements of TR255 may infer an expectation that the value is 
                   # to be calculated.
                   # To do so within TOSCA 1.3 would require use of a scaling notification and action
-                  # But it might be considered better to include the calulation in the template so that the result can be used on deployment. 
-                  # TOSCA 1.3 doesn't define any arithmetic functions so either the spec needs to be enhanced or use the non-standard extention found in puccini
-                  # to embed JavaScript in the TOSCA tempalate
+                  # But it might be considered better to include the calculation in the template so that the result can be used on deployment. 
+                  # TOSCA 1.3 doesn't define any arithmetic functions so either the spec needs to be enhanced or use the non-standard extension found in puccini
+                  # to embed JavaScript in the TOSCA template
                   - greater_or_equal: 4
               capabilities:
                 os:
@@ -347,7 +347,7 @@ topology_template:
           user: myusername
           token: mypassword
       requirements:
-      # TR255B says filtering adds compute but no extra stroage requirement
+      # TR255B says filtering adds compute but no extra storage requirement
         - host:
             node: tosca.nodes.Compute
             node_filter:
