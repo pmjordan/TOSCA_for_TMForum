@@ -8,7 +8,7 @@ data_types:
   # data types to implement SID base types
   ####################
   ReportingPeriod:
-    # TOSCA 1.3 has a more powerful defintion; scalar-unit.time 
+    # TOSCA 1.3 has a more powerful definition; scalar-unit.time 
     derived_from: string
     metadata:
       source: org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.BaseTypesABE.ReportingPeriod
@@ -28,7 +28,7 @@ data_types:
     metadata:
       source: org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.BaseTypesABE.DateTime
       sid_release: '19.0'
-    description: Attach the TOSCA and YAML defintion for timestamp to the SID DataTime defintion which has no canonical format definition 
+    description: Attach the TOSCA and YAML definition for timestamp to the SID DataTime definition which has no canonical format definition 
 
   Quantity:
     derived_from: tosca.datatypes.Root
@@ -53,11 +53,11 @@ data_types:
     properties:
       startDateTime:
         description: An instant of time, starting at the TimePeriod Notes If null, then represents to the beginning of time
-        # Use of Null in SID is incompatible with the TOSCA defintion of TimeStamp which we have adopted as a base data type and so Null cannot be used
+        # Use of Null in SID is incompatible with the TOSCA definition of TimeStamp which we have adopted as a base data type and so Null cannot be used
         type: DateTime
       endDateTime:
         description: An instant of time, ending  at the TimePeriod Notes If null, If null, then represents to the end of time
-        # Use of Null in SID is incompatible with the TOSCA defintion of TimeStamp which we have adopted as a base data type and so Null cannot be used
+        # Use of Null in SID is incompatible with the TOSCA definition of TimeStamp which we have adopted as a base data type and so Null cannot be used
         type: DateTime
 
   ##################
@@ -66,7 +66,7 @@ data_types:
 
   # MetricABE is represented as a data type schema not a node type because the orchestrator is not required to instantiate Metric ABE entities (as it is for resource entities)
   # The disadvantages are that 
-  # a) the MetricABE relationships are reduced to a single complex schema so the assocations can only be naviated a a single tree. Flattening the assoctions to create the tree is a descison made when creating sid.yml
+  # a) the MetricABE relationships are reduced to a single complex schema so the associations can only be navigated a a single tree. Flattening the associations to create the tree is a decision made when creating sid.yml
   # b) one the schema is used as an attribute everything inside it is a TOSCA attribute (and so read only) - may not be true consider how some SID attributes could eb properties and others attributes
   # c) None of the values are available until run time.
   # TODO How can this be expanded to include thresholds and consequences which can be read at design time? May need TOSCA spec changes to do this cleanly
@@ -93,7 +93,7 @@ data_types:
         type: string
         required: false
       _metricDefMeasure:
-      # The SID defintion for MetricDefinition contains a association to metricDefMeasure
+      # The SID definition for MetricDefinition contains a association to metricDefMeasure
         # We can included the text of the association in meta data for readability is required
         metadata:
           association: MetricDefinitionMeasuredAccordingTo
@@ -230,7 +230,7 @@ interface_types:
       sid_release: '19.0'
     description: This is an enumerated integer whose value indicates the current status of the object
     # Although all values from CompoundResource.status are included, only those which indicate a target resting state are likely to be used in a practical interface. 
-    # e.g. use the stop oeration not the set_stopping operation
+    # e.g. use the stop operation not the set_stopping operation
     operations:
       create:
         description: '13: In Maintenance'
@@ -291,7 +291,7 @@ node_types:
     properties:
       # mapping examples of those attributes of SID RootEntity which are not relationships and are not read only to TOSCA properties
       # JSON and therefore YAML and TOSCA does not have a syntax to declare that an attribute must be unique and so that (and
-      # possibly other) aspect of the SID defintion is lost when mapping to TOSCA
+      # possibly other) aspect of the SID definition is lost when mapping to TOSCA
       description:
         type: string
         required: False
@@ -388,24 +388,32 @@ node_types:
 
         In Maintenance indicates that this LogicalResource is being configured, maintained, or otherwise administered and is NOT available for service.
 
-        Unable To Contact indicates that the monitoring system has knowledge of this LogicalResource but has never been able to establish communications with it. In contrast, Lost Commmunications indicates that the LogicalResource has been contacted successfully in the past and is known to still exist; however, it is currently unreachable."
+        Unable To Contact indicates that the monitoring system has knowledge of this LogicalResource but has never been able to establish communications with it. In contrast, Lost Communications indicates that the LogicalResource has been contacted successfully in the past and is known to still exist; however, it is currently unreachable."
     interfaces:
       Standard:
         type: tosca.interfaces.node.lifecycle.lrStatus
 
-
+  tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.ResourceFunction:
+    derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE
+    metadata:
+      sid_release: '19.0'
+    properties:
+      keyWords:
+        type: string
+        description: A list of key words that may help in searches to find an RF spec with desired capabilities
+    
   tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource:
     description: >-
       Equates to PhysicalResourceSpec in TM Forum Information Model (SID)
     derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE
     metadata:
       sid_release: '19.0'
-    # In SID a PhysicalResourceSpec has a 1 : 0..1 releation to PhysicalResourceAttributes
+    # In SID a PhysicalResourceSpec has a 1 : 0..1 relation to PhysicalResourceAttributes
     # To model this in TOSCA we have these choices:
     # 1 use capability
       # We use this option
     # 2 use requirements: - dependency: capability
-      # This places a requirement on node instances derived from this spec that they MUST instantiate a node with the capabiliies defined in PhysicalResourceAttributes
+      # This places a requirement on node instances derived from this spec that they MUST instantiate a node with the capabilities defined in PhysicalResourceAttributes
       # which is not what we want
     # 3 use requirements: - dependency: node
       # This places a requirement on node instances derived from this spec that they MUST instantiate a node with the type PhysicalResourceAttributes
@@ -426,7 +434,7 @@ node_types:
         #   partNumber:
         #     type: string
         #   required: true
-    # 5 Make two node defintions, one with and one without the extension
+    # 5 Make two node definitions, one with and one without the extension
       # but that doubles the number of child entities
     # 6 Use capability but to a new intermediate node type
       # Does not seem to add anything helpful
