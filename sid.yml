@@ -176,6 +176,50 @@ capability_types:
       partNumber:
         type: string
 
+  tosca.capabilities.RootEntity:
+    description: >-
+      Equates to tosca.nodes.org.tmforum.models.sidmodels.CommonDomain.RootBusinessEntities:RootEntity
+    derived_from: tosca.capabilities.Root
+    properties:
+      description:
+        type: string
+        required: False
+        description: This is a string, and defines a textual identifier of an object
+      name:
+        type: string
+        description: Represents a user-friendly identifier of an object...
+        required: False
+      metric:
+        type: MetricMeasure
+      # Others to be added
+
+  tosca.capabilities.ResourceSpecificationABE:
+    description: >-
+      Equates to tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceSpecificationABE
+    derived_from: tosca.capabilities.RootEntity
+    properties:
+      validFor:
+        type: TimePeriod
+      # Others to be added 
+  
+  tosca.capabilities.LogicalResourceSpec:
+    description: >-
+      Equates to tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceSpecificationABE.LogicalResourceSpecificationABE
+    derived_from: tosca.capabilities.ResourceSpecificationABE
+      # There is a problem here as LogicalResourceSpec contains attributes of physicalResourceSpec and logicalResourceRole. If this was a node we could model these as capabilities but as this is already a capability we cannot use that trick
+      # ie. cannot nest capabilities and so we do not have a generic way to model in TOSCA the 1: 0..n relationships found in SID.
+
+
+  tosca.capabilities.ConnectionPointSpec:
+    description: >-
+      Equates to tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceSpecificationABE.LogicalResourceSpecificationABE.ConnectionPointSpec
+    # This does inherit attributes and so we do have to define the parent capabilities first
+    # TODO Inherit from RootEntity, EntitySpecification an ResourceSpecification instead of 
+    # some SID entities are mapped to TOSCA nodes and some to TOSCA capabilities and so there has to be a complete SID inheritance tree in both capability and node definitions
+    derived_from: tosca.capabilities.LogicalResourceSpec
+
+
+      
 ####################
 interface_types:
 
@@ -397,10 +441,21 @@ node_types:
     derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE
     metadata:
       sid_release: '19.0'
+    # capabilities:
+    #   connectionPointSpec:
+    #     type: tosca.capabilities.ConnectionPointSpec
+    #   connectionPointSpec2:
+    #     type: tosca.capabilities.ConnectionPointSpec
+
     properties:
       keyWords:
         type: string
         description: A list of key words that may help in searches to find an RF spec with desired capabilities
+
+  tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.ConnectionPoint:
+    derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE
+    metadata:
+      sid_release: '19.0'
     
   tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource:
     description: >-
@@ -411,7 +466,7 @@ node_types:
     # In SID a PhysicalResourceSpec has a 1 : 0..1 relation to PhysicalResourceAttributes
     # To model this in TOSCA we have these choices:
     # 1 use capability
-      # We use this option
+      # We use this option but as noted elsewhere it can only be used for once - we cannot nest capabilities in node in capabilities in nodes and so cannot map one to many relations as found throughout SID
     # 2 use requirements: - dependency: capability
       # This places a requirement on node instances derived from this spec that they MUST instantiate a node with the capabilities defined in PhysicalResourceAttributes
       # which is not what we want
