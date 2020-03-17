@@ -158,7 +158,7 @@ capability_types:
         
   tosca.capabilities.PhysicalResourceSpecAttributes:
     description: >-
-      Equates to tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceSpecificationABE.PhysicalResourceSpecificationABE.PhysicalResourceSpecAttributes
+      Equates to nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceSpecificationABE.PhysicalResourceSpecificationABE.PhysicalResourceSpecAttributes
     # No need to use an inheritance tree for this as it contains no inherited attributes. No harm in doing so if it makes sense for automated mapping but for now derive from root
     derived_from: tosca.capabilities.Root
     metadata:
@@ -178,7 +178,7 @@ capability_types:
 
   tosca.capabilities.RootEntity:
     description: >-
-      Equates to tosca.nodes.org.tmforum.models.sidmodels.CommonDomain.RootBusinessEntities:RootEntity
+      Equates to nodes.org.tmforum.models.sidmodels.CommonDomain.RootBusinessEntities:RootEntity
     derived_from: tosca.capabilities.Root
     properties:
       description:
@@ -195,7 +195,7 @@ capability_types:
 
   tosca.capabilities.ResourceSpecificationABE:
     description: >-
-      Equates to tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceSpecificationABE
+      Equates to nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceSpecificationABE
     derived_from: tosca.capabilities.RootEntity
     properties:
       validFor:
@@ -204,7 +204,7 @@ capability_types:
   
   tosca.capabilities.LogicalResourceSpec:
     description: >-
-      Equates to tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceSpecificationABE.LogicalResourceSpecificationABE
+      Equates to nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceSpecificationABE.LogicalResourceSpecificationABE
     derived_from: tosca.capabilities.ResourceSpecificationABE
       # There is a problem here as LogicalResourceSpec contains attributes of physicalResourceSpec and logicalResourceRole. If this was a node we could model these as capabilities but as this is already a capability we cannot use that trick
       # ie. cannot nest capabilities and so we do not have a generic way to model in TOSCA the 1: 0..n relationships found in SID.
@@ -212,7 +212,7 @@ capability_types:
 
   tosca.capabilities.ConnectionPointSpec:
     description: >-
-      Equates to tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceSpecificationABE.LogicalResourceSpecificationABE.ConnectionPointSpec
+      Equates to nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceSpecificationABE.LogicalResourceSpecificationABE.ConnectionPointSpec
     # This does inherit attributes and so we do have to define the parent capabilities first
     # TODO Inherit from RootEntity, EntitySpecification an ResourceSpecification instead of 
     # some SID entities are mapped to TOSCA nodes and some to TOSCA capabilities and so there has to be a complete SID inheritance tree in both capability and node definitions
@@ -224,7 +224,7 @@ capability_types:
 interface_types:
 
   tosca.interfaces.node.lifecycle.lrStatus:
-    derived_from: tosca.interfaces.node.lifecycle.Standard
+    #derived_from: tosca.interfaces.node
     description: Provides TOSCA interface to org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.lrStatus
     metadata:
       sid_release: '19.0'
@@ -267,8 +267,8 @@ interface_types:
           description: '15: Lost Communications'
 
 
-  tosca.interfaces.node.lifecycle.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource.status:
-    derived_from: tosca.interfaces.node.lifecycle.Standard
+  org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource.status:
+    #derived_from: tosca.interfaces.node.lifecycle.Standard
     metadata:
       source: org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource.status
       sid_release: '19.0'
@@ -322,14 +322,13 @@ node_types:
   # node types from SID model
   ###################
   
-  tosca.nodes.tmforum:
-    derived_from: tosca.nodes.Root
+  #tosca.nodes.tmforum:
+    #derived_from: tosca.nodes.Root
 
-  tosca.nodes.org.tmforum.models:
-    derived_from: tosca.nodes.tmforum
+  #tosca.nodes.org.tmforum.models:
+    #derived_from: tosca.nodes.tmforum
   
-  tosca.nodes.org.tmforum.models.sidmodels:
-    derived_from: tosca.nodes.org.tmforum.models
+  nodes.org.tmforum.models.sidmodels:
     metadata:
       sid_release: '19.0'
     properties:
@@ -344,26 +343,41 @@ node_types:
         type: string
         description: Represents a user-friendly identifier of an object...
         required: False
+      ID:
+        type: string
+        description: Unambiguously distinguishes different object instances
+        required: False
     # attributes:
     # If there were any SID read only attributes they would be mapped to TOSCA attributes here
+    # Include the caps and reqs behavior of tosca nodes. (we don't derive from tosca because we don't want to inherit the standard interface) 
+    capabilities:
+      feature: 
+        type: tosca.capabilities.Node
+    requirements:
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: tosca.nodes.Root
+          relationship: tosca.relationships.DependsOn
+          occurrences: [ 0, UNBOUNDED ]
+
       
-  tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain:
-    derived_from: tosca.nodes.org.tmforum.models.sidmodels
+  nodes.org.tmforum.models.sidmodels.ResourceDomain:
+    derived_from: nodes.org.tmforum.models.sidmodels
     metadata:
       sid_release: '19.0'
     
-  tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE:
-    derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain
     metadata:
       sid_release: '19.0'
     
-  tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE:
-    derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE
     metadata:
       sid_release: '19.0'
     
-  tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource:
-    derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE
     metadata:
       sid_release: '19.0'
     attributes:
@@ -394,15 +408,15 @@ node_types:
           In Maintenance indicates that this LogicalResource is being configured, maintained, or otherwise administered and is NOT available for service"
     interfaces:
       Standard:
-        type: tosca.interfaces.node.lifecycle.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource.status
+        type: org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource.status
 
-  tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE:
-    derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE
     metadata:
       sid_release: '19.0'
 
-  tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource:
-    derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE
     metadata:
       sid_release: '19.0'
     attributes:
@@ -437,8 +451,8 @@ node_types:
       Standard:
         type: tosca.interfaces.node.lifecycle.lrStatus
 
-  tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.ResourceFunction:
-    derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.ResourceFunction:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE
     metadata:
       sid_release: '19.0'
     # capabilities:
@@ -450,17 +464,18 @@ node_types:
     properties:
       keyWords:
         type: string
+        required: false
         description: A list of key words that may help in searches to find an RF spec with desired capabilities
 
-  tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.ConnectionPoint:
-    derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.ConnectionPoint:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE
     metadata:
       sid_release: '19.0'
     
-  tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource:
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource:
     description: >-
       Equates to PhysicalResourceSpec in TM Forum Information Model (SID)
-    derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE
     metadata:
       sid_release: '19.0'
     # In SID a PhysicalResourceSpec has a 1 : 0..1 relation to PhysicalResourceAttributes
@@ -497,13 +512,13 @@ node_types:
       PhysicalResourceSpecFurtherExtendedBy:
         type: tosca.capabilities.PhysicalResourceSpecAttributes
     
-  tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware:
-    derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource
     metadata:
       sid_release: '19.0'
 
-  tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.PhysicalPort:
-    derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.PhysicalPort:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware
     metadata:
       sid_release: '19.0'
     capabilities:
@@ -511,43 +526,43 @@ node_types:
       link:
         type: tosca.capabilities.network.Linkable
    
-  tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware:
-    derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware
     metadata:
       sid_release: '19.0'
 
-  tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer:
-    derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware
     metadata:
       sid_release: '19.0'
 
-  tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment:
-    derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
     metadata:
       sid_release: '19.0'
 
-  tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card:
-    derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment
     metadata:
       sid_release: '19.0'
 
-  tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder:
-    derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
     metadata:
       sid_release: '19.0'
 
-  tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.ComputingandSoftwareABE:
-    derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.ComputingandSoftwareABE:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE
     metadata:
       sid_release: '19.0'
 
-  tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.ComputingandSoftwareABE.SoftwareResourceandSoftwareABE:
-    derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.ComputingandSoftwareABE
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.ComputingandSoftwareABE.SoftwareResourceandSoftwareABE:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.ComputingandSoftwareABE
     metadata:
       sid_release: '19.0'
 
-  tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.ComputingandSoftwareABE.SoftwareResourceandSoftwareABE.InstalledSoftware:
-    derived_from: tosca.nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.ComputingandSoftwareABE.SoftwareResourceandSoftwareABE
+  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.ComputingandSoftwareABE.SoftwareResourceandSoftwareABE.InstalledSoftware:
+    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.ComputingandSoftwareABE.SoftwareResourceandSoftwareABE
     metadata:
       sid_release: '19.0'
     properties:
