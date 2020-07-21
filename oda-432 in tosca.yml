@@ -1,0 +1,174 @@
+# Required TOSCA Definitions version string
+tosca_definitions_version: tosca_simple_yaml_1_3
+# namespace: is optional and appears here when used. Value is a unique URI which makes definitions in this document unique if the document is imported
+metadata: 
+  # This section is optional in the TOSCA spec but required for good housekeeping
+  # This is a map of key value pairs, each value is a string
+  # All strings are quoted so that any special characters are not interpreted, this is YAML best practice
+  IPMode: 'RAND' 
+  author: 'paul.m.jordan@bt.com'
+  createdTimestamp: '2020-02-03' # Metadata is only defined as string but here we are using a string which conforms to YAML Timestamp datatype anyway
+  updatedTimestamp: '2020-02-03T13-42+01:00' # All operational Timestamps in BT should use UTC (with conversion at display time if required) but in this informal sense it is reasonable to show the local time of edit
+# description is optional but required for good housekeeping
+description: Sample of what an ODA component definition might look like in TOSCA - after ODA-432
+
+#repositories:
+  # map of external repository definitions which host TOSCA artifacts
+
+#imports:
+  # ordered list of import definitions 
+
+interface_types:
+  # map of interface type definitions
+  # a TOSCA interface is a way of managing a TOSCA node. They are the nothing to do with networking. 
+  # some are defined in the spec, including a standard set of create, configure, start, stop, delete tosca.interfaces.node.lifecycle.Standard: this is for refining those or creating new ones
+  # each of the form
+  #<interface_type_name>:
+    #derived_from: <parent_interface_type_name>
+    #version: <version_number>
+    #metadata: 
+      #<map of string>
+    #description: <interface_description>
+    #inputs: 
+      #<property_definitions>
+    #operations:
+      #<operation_definitions>
+      # one of either:
+      # short notations
+      #<operation_name>: <implementation_artifact_name>
+      # extended notation for type defs
+      #<operation_name>:
+        #description: <operation_description>
+        #implementation: <Operation implementation definition>
+        # one of either:
+        # short notation for use with single artifact
+        #implementation: <primary_artifact_name>
+        # Short notation for use with multiple artifact
+        #implementation: 
+          #primary: <primary_artifact_name>
+          #dependencies:
+            #- <list_of_dependent_artifact_names>
+          #operation_host : SELF
+          #timeout : 60
+        #Extended notation for use with single artifact
+        #implementation: 
+          #primary:
+            #<primary_artifact_definition>
+          #operation_host : HOST
+          #timeout : 100
+        #Extended notation for use with multiple artifacts
+        #implementation: 
+          #primary: 
+            #<primary_artifact_definition>   
+          #dependencies: 
+            #- <list_of_dependent_artifact definitions>
+          #operation_host: HOST
+          #timeout: 120
+  component_interface:
+    derived_from: sid:managedEntity
+    metadata:
+      source: org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.BaseTypesABE.ReportingPeriod
+      sid_release: '19.0'
+    #TODO examine whether the properties of managed entity are relevant to component definition
+
+  core_function:
+    derived_from: component_interface
+    operations:
+      # TODO resolve the mismatch - TOSCA interface definitions list each operation whereas a component just points t a swagger file containing all operations
+        my_operation_name:
+          implementation: 
+            primary: 
+              file: https://open.api/tmforum.org/TMF-620-ProductCatalog-v4.0.0.swagger.json
+              type: tosca.artifacts.Implementation.OpenAPI #TODO find or create an artefact type of OpenAPI and/or swagger, unless we clain that swagger.json is a Mime type. Neither seem to be registered with IANA
+
+
+    #notifications:
+      #<notification_definitions>
+      #TODO resolve that TOSCA defines notifications separately to interfaces and operations in those interfaces whereas a swagger file contains both operations and interfaces
+
+#node_types:
+#TOTO make and example node type for a component such as the usage monitor written by SigScale
+  # map of node type definitions
+  # defines some item of functionality, e.g. a webserver. TOSCA defined nodes include other types, for example they have the standard lifecycle interfaces.
+  # some are defined in the spec, this is for refining those or creating new ones
+  # map of <node_type_name>:  # mandatory name
+  # each of the form
+    #derived_from: <parent_node_type_name> # mandatory defined node type
+    #version: <version_number>
+    #metadata: 
+      #<map of string>
+    #description: <node_type_description>
+    #attributes:
+      #map of <attribute_definitions>
+      # each of the form
+      #attributes:
+        #<attribute_name>:
+          #type: <attribute_type>
+          #description: <attribute_description>
+          #default: <default_value> 
+          #status: <status_value>
+          #key_schema : <key_schema_definition>
+          #entry_schema: <entry_schema_definition>
+
+    #properties:
+      #map of <property_definitions>
+    #requirements:
+      #list of - <requirement_definitions>
+      # each of the form
+      #- <requirement_definition_name>: 
+      # capability: <capability_type_name>
+      # node: <node_type_name>
+      # relationship: <relationship_type_name>
+      # occurrences: [ <min_occurrences>, <max_occurrences> ]
+    #capabilities:
+      #map of <capability_definitions>
+      # two forms available
+      # short form
+      #<capability_definition_name>: <capability_type>
+      # extended form
+      #<capability_definition_name>:
+      # type: <capability_type>
+      # description: <capability_description>
+      # properties:
+      #   <property_definitions>
+      # attributes:
+      #   <attribute_definitions>
+      # valid_source_types: [ <node type_names> ]
+      # occurrences: [min,max] where min and max or integer or UNBOUNDED
+
+    #interfaces: 
+      #map of <interface_definitions>
+      # each of the form
+      #<interface_definition_name>:
+        #type: <interface_type_name>
+        #inputs: 
+          #<property_definitions>
+          # each of the form
+            #<property_name>: #mandatory unique string
+            #type: <property_type> # name of a defined property type.
+            #description: <property_description>
+            #required: <property_required> # boolean, default true
+            #default: <default_value>
+            #status: <status_value> # a string
+            #constraints: 
+            # list of <type_constraints>
+            # each of one of the forms
+              # Scalar grammar
+              #<operator>: <scalar_value> 
+              # Dual scalar grammar
+              #<operator>: [ <scalar_value_1>, <scalar_value_2> ]
+              # List grammar
+              #<operator> [ <value_1>, <value_2>, ..., <value_n> ]
+              # Regular expression (regex) grammar
+              #pattern: <regular_expression_value>
+              # Schema grammar
+              #schema: <schema_definition>
+            #key_schema : <key_schema_definition> # if the property_type is map, represents the optional schema definition for the keys used to identify entries in that map.
+            #entry_schema: <entry_schema_definition> # if the property_type is map or list, represents the optional schema definition for the entries in that map or list.
+            #metadata: 
+              # map of strings
+          #<operation_definitions>
+
+    #artifacts:
+      #map of <artifact_definitions>
+

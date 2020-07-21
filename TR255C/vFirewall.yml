@@ -6,7 +6,7 @@ imports:
   # would normally refer to external repository but for now it is local so comment it out
   # - repository: tmforum
   # The content is a TOSCA encoding of selected SID information model entities as explained in IG1176
-  # the content is imported into current namespace without use of any prefix as Node defintions are named to be unique but this may have to change when we reference sid data types as they are unwieldy when named with a full path
+  # the content is imported into current namespace without use of any prefix as Node definitions are named to be unique but this may have to change when we reference sid data types as they are unwieldy when named with a full path
 
 
 data_types:
@@ -477,3 +477,104 @@ topology_template:
         - my_SWI2_windows
         - my_SWI4_linux
         - my_SWI4_windows
+
+  workflows:
+  # Definition of each imperative workflow used in the topology. Our node types are not derived from TOSCA node type definitions and so do not inherit the standard lifecycle.
+  # These workflows are used instead.
+  # <list of workflow definitions>
+  # each of the form below which is taken from draft v1.3 as v1.2 has no formal grammar specification of workflow
+    deploy:
+      description: Specify an imperative workflow as node type has no declarative workflow.
+      inputs: 
+        operating_system:
+          type: os_choice
+      steps:
+        deploy_core_linux:
+          target: SWI1_linux
+          filter:
+            - or: # only one of sub-clauses must be true.
+              - assert:
+                - foo: [{equals: true}]
+
+            # - or:
+            #   - os_choice:
+            #     - equal: linux
+          activities:
+            - call_operation: SWI1_linux.Standard.operations.create
+        deploy_core_windows:
+          filter:
+            - os_choice: 
+              - equal: windows
+          activities:
+            - call_operation: SWI1_windows.Standard.operations.create
+
+
+
+
+
+    #undeploy:
+    #<workflow_name>: mandatory unique string. 'deploy' and 'undeploy' have special meaning and override the declarative workflow
+      
+      #description: <workflow_description>
+      
+      #metadata: 
+        # map of strings
+      
+      #inputs:
+        #<property_definitions>
+        # each of the form
+        #<property_name>: #mandatory unique string
+          
+          #type: <property_type> # name of a defined property type.
+          
+          #description: <property_description>
+          
+          #required: <property_required> # boolean, default true
+          
+          #default: <default_value>
+          
+          #status: <status_value> # a string
+          
+          #constraints: 
+          # list of <type_constraints>
+          # each of one of the forms
+            # Scalar grammar
+            #<operator>: <scalar_value> 
+            # Dual scalar grammar
+            #<operator>: [ <scalar_value_1>, <scalar_value_2> ]
+            # List grammar
+            #<operator> [ <value_1>, <value_2>, ..., <value_n> ]
+            # Regular expression (regex) grammar
+            #pattern: <regular_expression_value>
+            # Schema grammar
+            #schema: <schema_definition>
+          
+          #key_schema : <key_schema_definition> # if the property_type is map, represents the optional schema definition for the keys used to identify entries in that map.
+          
+          #entry_schema: <entry_schema_definition> # if the property_type is map or list, represents the optional schema definition for the entries in that map or list.
+          
+          #metadata: 
+            # map of strings
+      
+      #steps:
+      # <list of steps>
+      # each of the form
+        #<step_name>: mandatory unique string
+          
+          #target: <target_name> #represents the name of a node template or group in the topology.
+          
+          #target_relationship: <target_requirement_name> #represents the name of a requirement of the node template (in case target_name refers to a node template.)
+          
+          #operation_host: <operation_host_name> #the node on which the operation should be executed
+          
+          #filter:
+            #- <list_of_condition_clause_definition>
+          
+          #activities:
+            # <list of activities> # see 3.6.23 of draft spec 1.3
+          
+          #on_success:
+            # <list of step names>
+          
+          #on_failure:
+            # <list of step names>
