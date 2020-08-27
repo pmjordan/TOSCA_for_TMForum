@@ -124,11 +124,8 @@ data_types:
         description: The period during which Metrics associated with a MetricDefMeasure are captured. Note This may be replaced by a set of entities similar to the Performance Monitoring ABEs.
         type: TimePeriod
         default:
-          #startDateTime: 1970-1-1
-          #endDateTime: 1970-1-1
-          # Default values changed to strings in ISO 8601 format so that the puccini will parse them without use of the quirk. Would be better as ISO in SID anyway
-          startDateTime: '1970-01-01'
-          endDateTime: '1970-01-01'
+          startDateTime: 1970-1-1
+          endDateTime: 1970-1-1
       captureFrequency:
         description: The frequency of capture for the MetricDefMeasure. Note This may be replaced by a set of entities similar to the Performance Monitoring ABEs
         type: string
