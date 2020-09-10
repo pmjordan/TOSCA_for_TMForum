@@ -39,7 +39,7 @@ data_types:
     properties: 
       amount: 
         description: A quantity of something, typically the total of a thing or things in number, size, value, extent, or money.
-        type: integer
+        type: float
       units:
         description: The unit of measure for the quantity, such as meters, cubic yards, kilograms [ISO 80000], and the currency referring to [ISO 4217]
         type: string
