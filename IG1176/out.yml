@@ -1,0 +1,58 @@
+description: An example of using the node supplement pattern in IG1176
+nodeTemplates:
+  MyComponent:
+    metadata: {}
+    description: ""
+    types:
+      MyComponentType:
+        parent: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE
+      nodes.org.tmforum.models.sidmodels:
+        metadata:
+          sid_release: "19.0"
+      nodes.org.tmforum.models.sidmodels.ResourceDomain:
+        metadata:
+          sid_release: "19.0"
+        parent: nodes.org.tmforum.models.sidmodels
+      nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE:
+        metadata:
+          sid_release: "19.0"
+        parent: nodes.org.tmforum.models.sidmodels.ResourceDomain
+    directives: []
+    properties: {}
+    attributes: {}
+    requirements: []
+    capabilities:
+      feature:
+        description: ""
+        types:
+          tosca::Node:
+            description: The Node capability indicates the base capabilities of a TOSCA Node Type.
+            metadata:
+              puccini.normative: "true"
+              specification.citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              specification.location: 5.5.2
+            parent: tosca::Root
+          tosca::Root:
+            description: This is the default (root) TOSCA Capability Type definition that all other TOSCA Capability Types derive from.
+            metadata:
+              puccini.normative: "true"
+              specification.citation: '[TOSCA-Simple-Profile-YAML-v1.3]'
+              specification.location: 5.5.1
+        properties: {}
+        attributes: {}
+        minRelationshipCount: 0
+        maxRelationshipCount: -1
+    interfaces: {}
+    artifacts: {}
+groups: {}
+policies: {}
+inputs: {}
+outputs: {}
+workflows: {}
+substitution: null
+metadata:
+  parse_command: puccini-tosca --quirk data_types.timestamp.permissive parse "example.yml" > out.yml
+  template_author: paul.m.jordan@bt.com
+  template_name: IG1176 R5 example paragraph 7
+  template_version: "5.0"
+scriptletNamespace: {}

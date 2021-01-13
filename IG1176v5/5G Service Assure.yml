@@ -1,0 +1,287 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+description: A TOSCA template to implement the a service which includes a 5G backup to a fixed connection. The first use is a connection between an EV Charging Station and a Charging Station Management System as part of 5G Riders on the Storm 2020 Catalyst for TMForum
+
+metadata:
+  # The following fields are "normative" and expected in TOSCA 
+  template_name: 5G Service Assure
+  template_author: paul.m.jordan@bt.com
+  template_version: '5.0'
+  # This field is for convenience 
+  parse_command: puccini-tosca --quirk data_types.timestamp.permissive parse "tosca/5G Service Assure.yml" > out.yml
+  # the quirk in the above command tells puccini to allow timestamps in yaml format as used by sid.yml
+
+imports:
+  # would normally refer to external repository but for now make it local
+  - file: tosca/sid.yml
+  # The content is a TOSCA encoding of selected SID information model entities as explained in IG1176 plus some small updates
+    namespace_prefix: sid
+  - file: tosca/5G.yml
+    namespace_prefix: 5G
+
+# This file is built on the following assumptions:
+# A wireless connection is created by the 5G network in the admin down state and changed by the network to admin up when a connection request is made by a SIM. 
+#     i.e. standard behavior which does not need to modelled in this TOSCA template
+# The change over from fixed connection to a wireless connection is under control of the charging station.
+# One slice is used for all wireless connections
+# The slice will be allocated additional resources by the CSP in anticipation of a storm or other at-risk event
+# The additional resources are provided only for some sub-set of the charging stations
+# The sub-set of affected charging stations may change over time
+
+data_types:
+  serviceInstanceIdDataType:
+    derived_from:
+      integer
+
+capability_types:
+  monitor_performance:
+    derived_from: tosca.capabilities.Node
+    valid_source_types: [ performance_monitor_type ]
+
+interface_types:
+  performance_monitor_config_interface_type:
+    derived_from: tosca.interfaces.Root
+    operations:
+      connection_to_monitor_operation:
+        inputs:
+          connection_to_monitor_input: 
+            type: serviceInstanceIdDataType
+          SLO:
+            # This uses MetricDefinition as as datatype defined in SID
+            # But using 
+            type: sid:MetricDefinition
+          
+
+# Define Node Types
+node_types:
+  5G_assure_connection:
+    description: assured connection using combination of fixed and wireless
+    derived_from: sid:nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.ResourceFunction
+    properties:
+      my_assured_connection.availability:
+        type: sid:MetricDefinition
+        description: The Service Level Objective for instances of this class. Modelled in TOSCA using a datatype derived from SID. 
+        required: false
+    attributes:
+      serviceInstanceId:
+        type: serviceInstanceIdDataType
+        description: An invented parameter to uniquely identify this connection
+    capabilities:
+      # There are always two external, user plane, interfaces
+      a_end: Endpoint 
+      z-end: Endpoint
+
+  fixed_connection:
+    description: connection between two endpoints over a fixed connection
+    derived_from: sid:nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.ResourceFunction
+    capabilities:
+      # There are always user plane interfaces
+      a_end: Endpoint 
+      z-end: Endpoint
+
+  wireless_connection:
+    description: connection between two endpoints over a wireless connection
+    derived_from: sid:nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.ResourceFunction
+    attributes:
+      # We need these connections to have a unique ID, assume that it is auto-generated on creation
+      wireless_connection_id:
+        type: integer
+    requirements:
+      # state the resources needed to make the connection over a slice. A slice will need to be created if it doesn't exist
+      - slice:
+          # we only want to specify node type but syntax demands capability as well
+          capability: 5G:sliceType
+          node: 5G:5G_slice
+          relationship: DependsOn
+    capabilities:
+      # There are always two user plane interfaces
+      a_end: Endpoint 
+      z-end: Endpoint
+
+  performance_monitor_type:
+    derived_from: tosca.nodes.Root
+    capabilities:
+      monitor_app:
+        type: monitor_performance
+        occurrences: [ 0, 1 ]
+    interfaces:
+      performance_monitor_config:
+        type: 
+          performance_monitor_config_interface_type
+
+policy_types:
+  tosca.policies.Placement.Colocate:
+  # This type is used in TOSCA spec examples but not defined. Using string type is imprecise.
+    derived_from: tosca.policies.Placement
+    properties:
+      affinity:
+        type: string
+    targets:
+      - 5G:5G_slice
+
+topology_template:
+  node_templates:
+    my_assured_connection:
+      type: 5G_assure_connection
+      # Every CS-CSMS connection requires an instance of a fixed connection and a wireless connection
+      properties:
+        # This is the first of two techniques which might be used to add a SID derived statement of availability target
+        # It holds the value as data types
+        my_assured_connection.availability: 
+          name:
+            "availabilityServiceLevelObjective"
+          description:
+            "The MetricDefinition used to define the availability of this connection"
+          _metricDefMeasure:
+            # A map of metricDefMeasures associated with this metricDefinition
+            measure1:
+              unitOfMeasure:
+                # so we measure in 1/100 000 ths
+                amount: 0.00001
+                # availability is a ratio and so has no units. User interface may choose to display it as a percentage
+                units: None
+              valueType: float
+              _metricDefinitionThresholdSet:
+                threshold_set1:
+                  thresholdType: LogicDefinition
+                  _metricDefMeasureThresholdRule:
+                  # the above which comes from the node definition points to a superclass but for this instance we want to use a child of that superclass ie MetricThresholdRuleDefinition the child of MetricDefMeasureThresholdRule
+                    rule1:
+                      conformanceTargetLower: 0.9999
+                      conformanceComparatorLower: LE
+      attributes:
+        serviceInstanceId:
+      requirements:
+        - dependency: fixed_connection
+          # could add additional node_filter to ensure the endpoints or other properties of the fixed connection  match those of my_CS_CSMS_connection
+        - dependency: wireless_connection
+          # could add additional node_filter to ensure the endpoints or other properties of the wireless connection match those of my_CS_CSMS_connection
+        - dependency: performance_monitor
+        - extension:
+          # This is the second of two possible techniques which might be used to include a SID derived availability target.
+          # This uses nodes linked by a defined relationship type to represent the extension of one node by another
+          # Readability is improved by reversing the normal grammar and declaring the relationship before the node
+            relationship:
+              type: sid:MetricDefinitionMeasures
+            node: my_assured_connection.availability
+
+
+    my_assured_connection.availability:
+      type: sid:MetricDefinition
+      requirements:
+        - extension:
+            relationship: 
+              type: sid:MetricDefinitionMeasuredAccordingTo
+              # could set type as sid:NodeIsSupplementedBy if we don't want to use the specific relation name from SID
+              # This would mean that it is no longer necessary to add all the specific names in the sid file
+              # e.g. type: sid:NodeIsSupplementedBy
+            node: my_assured_connection.availability.MetricDefMeasure
+
+    my_assured_connection.availability.MetricDefMeasure:
+      type: sid:MetricDefMeasure
+      properties:
+        unitOfMeasure:
+          # so we measure in 1/100 000 ths
+          amount: 0.00001
+          # availability is a ratio and so has no units. User interface may choose to display it as a percentage
+          units: None
+        valueType: float
+      requirements:
+        - extension:
+            relationship:
+              type: sid:MetricDefMeasuredEvaluatedUsing
+            node: my_assured_connection.availability.MetricDefMeasure.MetricDefinitionThresholdSet
+    
+    my_assured_connection.availability.MetricDefMeasure.MetricDefinitionThresholdSet:
+      type: sid:MetricDefinitionThresholdSet
+      properties:
+        thresholdType: LogicDefinition
+      requirements:
+        - extension:
+            relationship:
+              type: sid:MetricDefMeasuredThresholdSetContains
+            node: my_assured_connection.availability.MetricDefMeasure.MetricDefinitionThresholdSet.MetricThresholdRuleDefinition
+          
+    my_assured_connection.availability.MetricDefMeasure.MetricDefinitionThresholdSet.MetricThresholdRuleDefinition:
+      type: sid:MetricThresholdRuleDefinition
+      properties:
+        conformanceTargetLower: 0.9999
+        conformanceComparatorLower: LE
+        metricApplicability:
+          valid_for:
+            startDateTime: 1970-1-1
+            endDateTime: 2025-1-1
+      requirements:
+        - extension:
+            relationship:
+              type: sid:MetricDefMeasureConsequenceDependsOn
+            node: my_assured_connection.availability.MetricDefMeasure.MetricDefinitionThresholdSet.MetricThresholdRuleDefinition.MetricDefMeasureConsequence
+
+    my_assured_connection.availability.MetricDefMeasure.MetricDefinitionThresholdSet.MetricThresholdRuleDefinition.MetricDefMeasureConsequence:
+      type: sid:MetricDefMeasureConsequence
+      properties:
+        prescribedAction: 'Set GUI to Red'
+        repeatAction: true
+
+    my_fixed_connection:
+      type: fixed_connection
+
+    my_wireless_connection:
+      type: wireless_connection
+      requirements:
+        - slice: slice_for_5G_assure
+            # the commented out syntax is uses the target node_filter method; instead we use the abstract node template method in cs_csms_slice, either would be possible
+            # node_filter:
+            #   properties:
+            #     sliceQoSType:
+            #       - { equal: embb }
+
+
+    slice_for_5G_assure:
+      type: 5G:5G_embb_slice
+      interfaces:
+        5G_slice_management_interface:
+          operations:
+            change_resource_allocation:
+              # It should be possible to define implementation in the interface type definition but puccini does not seem to pick it up so repeat it here
+              implementation: executable_which_changes_resource.sh
+              inputs: 
+                affected_connections_list: { get_input: [ SELF, affected_connections_list ] }
+      # this uses the abstract node template method
+      # Abstract node template (placeholder) to be selected by provider
+      directives: [ select ]
+
+    performance_monitor:
+      type: performance_monitor_type
+      directives: [ select ]
+      interfaces:
+        performance_monitor_config:
+          operations:
+            connection_to_monitor_operation:
+              inputs:
+                connection_to_monitor_input: { get_attribute: [my_assured_connection,serviceInstanceId] }
+                SLO:
+                  ## This value is currently hardcoded but should really be derived from the SLO value supplied with the order using the same technique as app_public_url
+                  _metricDefMeasure:
+                    measure1:
+                      unitOfMeasure:
+                        # so we measure in 1/100 000 ths
+                        amount: 0.00001
+                        # availability is a ratio and so has no units. User interface may choose to display it as a percentage
+                        units: None
+                      valueType: float
+                      _metricDefinitionThresholdSet:
+                        threshold_set1:
+                          thresholdType: LogicDefinition
+                          _metricDefMeasureThresholdRule:
+                          # the above which comes from the node definition points to a superclass but for this instance we want to use a child of that superclass ie MetricThresholdRuleDefinition the child of MetricDefMeasureThresholdRule
+                            rule1:
+                              conformanceTargetLower: 0.9999
+                              conformanceComparatorLower: LE
+
+
+  policies:
+    - wireless_connection_affinity:
+        type: tosca.policies.Placement.Colocate
+        description: Keep all instances of my_wireless_connection on a single instance of slice_for_5G_assure
+        properties:
+          affinity: slice_for_5G_assure
