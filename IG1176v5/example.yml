@@ -15,16 +15,10 @@ imports:
   # The content is a TOSCA encoding of selected SID information model entities as explained in IG1176 plus some small updates
     namespace_prefix: sid
 
-node_types:
-  connection:
-    description: assured connection using combination of fixed and wireless
-    derived_from: sid:nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.ResourceFunction
- 
-
 topology_template:
   node_templates:
     my_assured_connection:
-      type: connection
+      type: sid:nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.ResourceFunction
       requirements:
         - extension:
           # This shows how a deployable node based on ResourceFunction can be related to a supplementary nodes to associate concepts from other branches of the SID

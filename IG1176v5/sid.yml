@@ -127,27 +127,6 @@ A MetricDefMeasureThresholdSet contains either MetricThresholdRuleDefinition ins
         required: false
       thresholdType:
         type: MetricThresholdType
-      # SID has a relation to a parent abstract superclass of MetricDefMeasureThresholdRule as below
-      # _metricDefMeasureThresholdRule:
-      #   metadata:
-      #     association: MetricDefMeasuredThresholdSetContains
-      #   type: map
-      #   entry_schema: MetricDefMeasureThresholdRule
-      # But TOSCA demands a direct link to the concrete subclasses of MetricThresholdRuleDefinition and PreDefinedMetricThresholdRule 
-      # It is hard to see how this could be converted from SID to YAML algorithmically. Which is why instead we have the node supplement pattern. 
-      # Note how the second map is added and renamed
-      # _metricDefMeasureThresholdRule:
-      #   metadata:
-      #     association: MetricDefMeasuredThresholdSetContains
-      #   type: map
-      #   entry_schema: MetricThresholdRuleDefinition
-      #   required: false
-      # _metricDefMeasureThresholdRule2:
-      #   metadata:
-      #     association: MetricDefMeasuredThresholdSetContains
-      #   type: map
-      #   entry_schema: PreDefinedMetricThresholdRule
-      #   required: false
 
   MetricValueType:
   # added since IG1176 R19.0
@@ -186,15 +165,9 @@ A MetricDefMeasureThresholdSet contains either MetricThresholdRuleDefinition ins
       description:
         type: string
         required: false
-      _metricDefMeasure:
-      # The SID definition for MetricDefinition contains a association to metricDefMeasure
-        metadata:
-          association: MetricDefinitionMeasuredAccordingTo
-          # We can include the text of the association in meta data for readability as required
-        type: map
-        # was list in IG1176 R19.0
-        entry_schema: MetricDefMeasure
-        required: false
+      # _metricDefMeasure:
+      # # The SID definition for MetricDefinition contains a association to metricDefMeasure
+      # This might be modelled using a map with an entry_schema: MetricDefMeasure but doing so does not work well for abstract classes. Better to use teh node supplement pattern.
 
   MetricThresholdRuleDefinition:
     metadata:
@@ -229,7 +202,6 @@ A MetricDefMeasureThresholdSet contains either MetricThresholdRuleDefinition ins
         type: integer
         description: The number of allowed crossing occurrences in reference to the tolerancePeriod without a consequence being initiated.
         required: false
-
 
   PreDefinedMetricThresholdRule:
     metadata:
@@ -728,27 +700,6 @@ A MetricDefMeasureThresholdSet contains either MetricThresholdRuleDefinition ins
       - extension:
           relationship: MetricDefMeasuredThresholdSetContains
           node: MetricDefMeasureThresholdRule
-
-      # SID has a relation to a parent abstract superclass of MetricDefMeasureThresholdRule as below
-      # _metricDefMeasureThresholdRule:
-      #   metadata:
-      #     association: MetricDefMeasuredThresholdSetContains
-      #   type: map
-      #   entry_schema: MetricDefMeasureThresholdRule
-      # But TOSCA demands a direct link to the concrete subclasses of MetricThresholdRuleDefinition and PreDefinedMetricThresholdRule 
-      # It is hard to see how this could be converted form SID to YAML algorithmically. Note how the second map is added and renamed
-      # _metricDefMeasureThresholdRule:
-      #   metadata:
-      #     association: MetricDefMeasuredThresholdSetContains
-      #   type: map
-      #   entry_schema: MetricThresholdRuleDefinition
-      #   required: false
-      # _metricDefMeasureThresholdRule2:
-      #   metadata:
-      #     association: MetricDefMeasuredThresholdSetContains
-      #   type: map
-      #   entry_schema: PreDefinedMetricThresholdRule
-      #   required: false
 
   MetricDefMeasureThresholdRule:
     # added since IG1176 R19.0
