@@ -653,23 +653,13 @@ node_types:
       description:
         type: string
         required: false
-    # The SID definition for MetricDefinition contains a association to metricDefMeasure
+    # The SID definition for MetricDefinition contains a association to _metricDefMeasure
+    # We represent it here using the supplementary node pattern
+    # The name for the relationship is the specific one from SID but functionally it is no different to the TOSCA relationship NodeIsSupplementedBy
     requirements:
       - extension:
-          relationship: 
-            type: MetricDefinitionMeasuredAccordingTo
-        # could set type as sid:NodeIsSupplementedBy if we don't want to use the specific relation name from SID
-        # This would mean that it is no longer necessary to add all the specific names in the sid file
-        # e.g. type: sid:NodeIsSupplementedBy
-      # _metricDefMeasure:
-      # # The SID definition for MetricDefinition contains a association to metricDefMeasure
-      #   metadata:
-      #     association: MetricDefinitionMeasuredAccordingTo
-      #     # We can include the text of the association in meta data for readability as required
-      #   type: map
-      #   # was list in IG1176 R19.0
-      #   entry_schema: MetricDefMeasure
-      #   required: false
+          relationship: MetricDefinitionMeasuredAccordingTo
+          node: MetricDefMeasure
 
   MetricDefMeasure:
     derived_from: nodes.org.tmforum.models.sidmodels.CommonDomain.MetricABE.MetricDefinitionMeasureABE
@@ -707,13 +697,10 @@ node_types:
         description: The period for which the MetricDefMeasure is valid
         type: TimePeriod
         required: false
-      # _metricDefinitionThresholdSet:
-      # # added since IG1176 R19.0
-      #   metadata:
-      #     association: MetricDefMeasuredEvaluatedUsing
-      #   type: map
-      #   entry_schema: MetricDefinitionThresholdSet
-      #   required: false
+    requirements:
+      - extension:
+          relationship: MetricDefMeasuredEvaluatedUsing
+          node: MetricDefinitionThresholdSet
 
   MetricDefinitionThresholdSet:
   # added since IG1176 R19.0
@@ -737,6 +724,11 @@ A MetricDefMeasureThresholdSet contains either MetricThresholdRuleDefinition ins
         required: false
       thresholdType:
         type: MetricThresholdType
+    requirements:
+      - extension:
+          relationship: MetricDefMeasuredThresholdSetContains
+          node: MetricDefMeasureThresholdRule
+
       # SID has a relation to a parent abstract superclass of MetricDefMeasureThresholdRule as below
       # _metricDefMeasureThresholdRule:
       #   metadata:
@@ -768,6 +760,11 @@ A MetricDefMeasureThresholdSet contains either MetricThresholdRuleDefinition ins
       metricApplicability:
         type: MetricDefMeasureApplicability
       # plus other properties
+    requirements:
+      - extension:
+          # Note that this is an extension of an abstract class
+          relationship: MetricDefMeasureConsequenceDependsOn
+          node: MetricDefMeasureConsequence
 
   MetricThresholdRuleDefinition:
     derived_from: MetricDefMeasureThresholdRule
@@ -801,14 +798,7 @@ A MetricDefMeasureThresholdSet contains either MetricThresholdRuleDefinition ins
         type: integer
         description: The number of allowed crossing occurrences in reference to the tolerancePeriod without a consequence being initiated.
         required: false
-    requirements:
-      - extension:
-          relationship:
-            type: MetricDefMeasureConsequenceDependsOn
-          node: MetricDefMeasureConsequence
-          # Nodes can be extended by more than one supplementary node type as shown in the dummy entry below
-          # relationship2:
-          #   type: nodes.org.tmforum.models.sidmodels.CommonDomain.MetricABE
+      # Note that there is no node extension here; it is inherited from its parent abstract class
 
   PreDefinedMetricThresholdRule:
     derived_from: MetricDefMeasureThresholdRule
@@ -818,6 +808,7 @@ A MetricDefMeasureThresholdSet contains either MetricThresholdRuleDefinition ins
     properties:
       derivationAlgorithm:
         type: string
+    # Note that there is no node extension here; it is inherited from its parent abstract class
 
   MetricDefMeasureConsequence:
     derived_from: nodes.org.tmforum.models.sidmodels.CommonDomain.MetricABE.MetricDefinitionMeasureABE

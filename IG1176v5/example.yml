@@ -37,11 +37,8 @@ topology_template:
       type: sid:MetricDefinition
       requirements:
         - extension:
-            #relationship: 
-              #type: sid:MetricDefinitionMeasuredAccordingTo
-              # could set type as sid:NodeIsSupplementedBy if we don't want to use the specific relation name from SID
-              # This would mean that it is no longer necessary to add all the specific names in the sid file
-              # e.g. type: sid:NodeIsSupplementedBy
+            # The relationship type and allowable target node class are inherited from the node type, 
+            # here we refine the target node to a specific instance
             node: my_assured_connection.availability.MetricDefMeasure
 
     my_assured_connection.availability.MetricDefMeasure:
@@ -55,8 +52,6 @@ topology_template:
         valueType: float
       requirements:
         - extension:
-            relationship:
-              type: sid:MetricDefMeasuredEvaluatedUsing
             node: my_assured_connection.availability.MetricDefMeasure.MetricDefinitionThresholdSet
     
     my_assured_connection.availability.MetricDefMeasure.MetricDefinitionThresholdSet:
@@ -65,8 +60,6 @@ topology_template:
         thresholdType: LogicDefinition
       requirements:
         - extension:
-            relationship:
-              type: sid:MetricDefMeasuredThresholdSetContains
             node: my_assured_connection.availability.MetricDefMeasure.MetricDefinitionThresholdSet.MetricThresholdRuleDefinition
           
     my_assured_connection.availability.MetricDefMeasure.MetricDefinitionThresholdSet.MetricThresholdRuleDefinition:
@@ -80,21 +73,19 @@ topology_template:
             endDateTime: 2025-1-1
       requirements:
         - extension:
-            relationship:
-              type: sid:MetricDefMeasureConsequenceDependsOn
             node: my_assured_connection.availability.MetricDefMeasure.MetricDefinitionThresholdSet.MetricThresholdRuleDefinition.MetricDefMeasureConsequence
+        # This clause below shows that there can be more than one instance of an extension of a particular type
         - extension:
             relationship:
               type: sid:MetricDefMeasureConsequenceDependsOn
-            node: t
+            node: alert
     my_assured_connection.availability.MetricDefMeasure.MetricDefinitionThresholdSet.MetricThresholdRuleDefinition.MetricDefMeasureConsequence:
       type: sid:MetricDefMeasureConsequence
       properties:
         prescribedAction: 'Set GUI to Red'
         repeatAction: true
-
-    t:
+    alert:
       type: sid:MetricDefMeasureConsequence
       properties:
-        prescribedAction: 'Set GUI to Red'
-        repeatAction: true
+        prescribedAction: 'Send an alert message'
+        repeatAction: false
