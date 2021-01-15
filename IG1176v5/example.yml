@@ -37,8 +37,8 @@ topology_template:
       type: sid:MetricDefinition
       requirements:
         - extension:
-            relationship: 
-              type: sid:MetricDefinitionMeasuredAccordingTo
+            #relationship: 
+              #type: sid:MetricDefinitionMeasuredAccordingTo
               # could set type as sid:NodeIsSupplementedBy if we don't want to use the specific relation name from SID
               # This would mean that it is no longer necessary to add all the specific names in the sid file
               # e.g. type: sid:NodeIsSupplementedBy
@@ -83,8 +83,17 @@ topology_template:
             relationship:
               type: sid:MetricDefMeasureConsequenceDependsOn
             node: my_assured_connection.availability.MetricDefMeasure.MetricDefinitionThresholdSet.MetricThresholdRuleDefinition.MetricDefMeasureConsequence
-
+        - extension:
+            relationship:
+              type: sid:MetricDefMeasureConsequenceDependsOn
+            node: t
     my_assured_connection.availability.MetricDefMeasure.MetricDefinitionThresholdSet.MetricThresholdRuleDefinition.MetricDefMeasureConsequence:
+      type: sid:MetricDefMeasureConsequence
+      properties:
+        prescribedAction: 'Set GUI to Red'
+        repeatAction: true
+
+    t:
       type: sid:MetricDefMeasureConsequence
       properties:
         prescribedAction: 'Set GUI to Red'

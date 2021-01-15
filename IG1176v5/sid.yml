@@ -1,27 +1,7 @@
 tosca_definitions_version: tosca_simple_yaml_1_3
 
-####################
 data_types:
-####################
-
-  ##################
   # data types to implement SID base types
-  ####################
-  ReportingPeriod:
-    # TOSCA 1.3 has a more powerful definition; scalar-unit.time 
-    derived_from: string
-    metadata:
-      source: org.tmforum.models.sidmodels.CommonBusinessEntitiesDomain.BaseTypesABE.ReportingPeriod
-      sid_release: '19.0'
-    constraints:
-      - valid_values:
-        - NA
-        - R_15MN
-        - R_1H
-        - R_1MN
-        - R_24H
-        - R_30MN
-        - R_5MN
   
   DateTime:
     derived_from: timestamp
@@ -77,18 +57,9 @@ data_types:
             - months
             - years
 
-
-
   ##################
   # data types to implement SID MetricABE
   ####################
-
-  # MetricABE is represented as a data type schema not a node type because the orchestrator is not required to instantiate Metric ABE entities (as it is for resource entities)
-  # The disadvantages are that 
-  # a) the MetricABE relationships are reduced to a single complex schema so the associations can only be navigated a a single tree. Flattening the associations to create the tree is a decision made when creating sid.yml
-  # b) once the schema is used as an attribute everything inside it is a TOSCA attribute (and so read only) - may not be true consider how some SID attributes could be properties and others attributes
-  # c) None of the values are available until run time.
-  # TODO How can this be expanded to include thresholds and consequences which can be read at design time? May need TOSCA spec changes to do this cleanly
 
   MetricThresholdComparator:
     # added since IG1176 R19.0
@@ -122,9 +93,6 @@ data_types:
         description: Description for the MetricDefMeasureThresholdRule .
         required: false
 
-  
-
-  
   MetricThresholdType:
   # added since IG1176 R19.0
     metadata:
@@ -166,21 +134,20 @@ A MetricDefMeasureThresholdSet contains either MetricThresholdRuleDefinition ins
       #   type: map
       #   entry_schema: MetricDefMeasureThresholdRule
       # But TOSCA demands a direct link to the concrete subclasses of MetricThresholdRuleDefinition and PreDefinedMetricThresholdRule 
-      # It is hard to see how this could be converted from SID to YAML algorithmically. Note how the second map is added and renamed
-      _metricDefMeasureThresholdRule:
-        metadata:
-          association: MetricDefMeasuredThresholdSetContains
-        type: map
-        entry_schema: MetricThresholdRuleDefinition
-        required: false
-      _metricDefMeasureThresholdRule2:
-        metadata:
-          association: MetricDefMeasuredThresholdSetContains
-        type: map
-        entry_schema: PreDefinedMetricThresholdRule
-        required: false
-      
-
+      # It is hard to see how this could be converted from SID to YAML algorithmically. Which is why instead we have the node supplement pattern. 
+      # Note how the second map is added and renamed
+      # _metricDefMeasureThresholdRule:
+      #   metadata:
+      #     association: MetricDefMeasuredThresholdSetContains
+      #   type: map
+      #   entry_schema: MetricThresholdRuleDefinition
+      #   required: false
+      # _metricDefMeasureThresholdRule2:
+      #   metadata:
+      #     association: MetricDefMeasuredThresholdSetContains
+      #   type: map
+      #   entry_schema: PreDefinedMetricThresholdRule
+      #   required: false
 
   MetricValueType:
   # added since IG1176 R19.0
@@ -228,52 +195,51 @@ A MetricDefMeasureThresholdSet contains either MetricThresholdRuleDefinition ins
         # was list in IG1176 R19.0
         entry_schema: MetricDefMeasure
         required: false
-      
 
   MetricThresholdRuleDefinition:
-      metadata:
-        source: org.tmforum.models.sidmodels.CommonDomain.MetricDefinitionMeasureABE.MetricDefinitionMeasureThresholdABE
-        sid_release: '19.0'
-      description: 'Various types of threshold logic can be implemented by this entity. For example: Indicator > Value.'
-      derived_from: MetricDefMeasureThresholdRule
-      properties:
-        conformanceTargetLower:
-          type: float
-          description: A value used to determine if the threshold is crossed or ceases to be crossed. It represents the Lower limit. The value should be less than the conformanceTargetUpper. The conformance comparators should also be logically defined so as to not lead to a logically impossible condition.
-          required: false
-        conformanceComparatorLower:
-          type: MetricThresholdComparator
-          description: "An operator that when applied on a value specifies whether a threshold is crossed or ceased to be crossed.
-          This operator is used to compare with the conformanceTargetLower."
-          required: false
-        conformanceTargetUpper:
-          type: float
-          description: A value used to determine if the threshold is crossed or ceases to be crossed. It represents the Upper limit. The value should be greater than the conformanceTargetLower. The conformance comparators should also be logically defined so as to not lead to a logically impossible condition.
-          required: false
-        conformanceComparatorUpper:
-          type: MetricThresholdComparator
-          description: "An operator that when applied on a value specifies whether a threshold is crossed or ceased to be crossed.
-          This operator is used to compare with the conformanceTargetUpper."
-          required: false
-        tolerancePeriod:
-          type: Duration
-          description: An interval of time of allowed crossing occurrences before a consequence being initiated.
-          required: false
-        numberOfAllowedCrossing:
-          type: integer
-          description: The number of allowed crossing occurrences in reference to the tolerancePeriod without a consequence being initiated.
-          required: false
+    metadata:
+      source: org.tmforum.models.sidmodels.CommonDomain.MetricDefinitionMeasureABE.MetricDefinitionMeasureThresholdABE
+      sid_release: '19.0'
+    description: 'Various types of threshold logic can be implemented by this entity. For example: Indicator > Value.'
+    derived_from: MetricDefMeasureThresholdRule
+    properties:
+      conformanceTargetLower:
+        type: float
+        description: A value used to determine if the threshold is crossed or ceases to be crossed. It represents the Lower limit. The value should be less than the conformanceTargetUpper. The conformance comparators should also be logically defined so as to not lead to a logically impossible condition.
+        required: false
+      conformanceComparatorLower:
+        type: MetricThresholdComparator
+        description: "An operator that when applied on a value specifies whether a threshold is crossed or ceased to be crossed.
+        This operator is used to compare with the conformanceTargetLower."
+        required: false
+      conformanceTargetUpper:
+        type: float
+        description: A value used to determine if the threshold is crossed or ceases to be crossed. It represents the Upper limit. The value should be greater than the conformanceTargetLower. The conformance comparators should also be logically defined so as to not lead to a logically impossible condition.
+        required: false
+      conformanceComparatorUpper:
+        type: MetricThresholdComparator
+        description: "An operator that when applied on a value specifies whether a threshold is crossed or ceased to be crossed.
+        This operator is used to compare with the conformanceTargetUpper."
+        required: false
+      tolerancePeriod:
+        type: Duration
+        description: An interval of time of allowed crossing occurrences before a consequence being initiated.
+        required: false
+      numberOfAllowedCrossing:
+        type: integer
+        description: The number of allowed crossing occurrences in reference to the tolerancePeriod without a consequence being initiated.
+        required: false
+
 
   PreDefinedMetricThresholdRule:
-      metadata:
-        source: org.tmforum.models.sidmodels.CommonDomain.MetricDefinitionMeasureABE.MetricDefinitionMeasureThresholdABE
-        sid_release: '19.0'
-      description: A pre-defined threshold is a "black-box" logic that resides in the PM Producing Application. A PM consuming application can execute it assigning values to its parameters.
-      derived_from: MetricDefMeasureThresholdRule
-      properties:
-        derivationAlgorithm:
-          type: string
-        
+    metadata:
+      source: org.tmforum.models.sidmodels.CommonDomain.MetricDefinitionMeasureABE.MetricDefinitionMeasureThresholdABE
+      sid_release: '19.0'
+    description: A pre-defined threshold is a "black-box" logic that resides in the PM Producing Application. A PM consuming application can execute it assigning values to its parameters.
+    derived_from: MetricDefMeasureThresholdRule
+    properties:
+      derivationAlgorithm:
+        type: string
 
   MetricDefMeasure:
     metadata:
@@ -403,15 +369,6 @@ capability_types:
       # ie. cannot nest capabilities and so we do not have a generic way to model in TOSCA the 1: 0..n relationships found in SID.
 
 
-  tosca.capabilities.ConnectionPointSpec:
-    description: >-
-      Equates to nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceSpecificationABE.LogicalResourceSpecificationABE.ConnectionPointSpec
-    # This does inherit attributes and so we do have to define the parent capabilities first
-    # TODO Inherit from RootEntity, EntitySpecification an ResourceSpecification instead of 
-    # some SID entities are mapped to TOSCA nodes and some to TOSCA capabilities and so there has to be a complete SID inheritance tree in both capability and node definitions
-    derived_from: tosca.capabilities.LogicalResourceSpec
-
-
       
 ####################
 interface_types:
@@ -512,7 +469,7 @@ relationship_types:
 ####################
   NodeIsSupplementedBy:
     derived_from: tosca.relationships.Root
-    description: Allows deployable nodes to be enhanced with information in supplementary nodes
+    description: Allows deployable nodes to be enhanced with information contained in supplementary nodes
     valid_target_types: [ NodeSupplement ]
 
   MetricDefinitionMeasures:
@@ -575,12 +532,12 @@ node_types:
     requirements:
       - dependency:
           capability: tosca.capabilities.Node
-          node: tosca.nodes.Root
+          node: nodes.org.tmforum.models.sidmodels
           relationship: tosca.relationships.DependsOn
           occurrences: [ 0, UNBOUNDED ]
       - extension:
           capability: NodeSupplement
-          node: tosca.nodes.Root
+          node: nodes.org.tmforum.models.sidmodels
           relationship: NodeIsSupplementedBy
           occurrences: [ 0, UNBOUNDED ]
       
@@ -593,45 +550,6 @@ node_types:
     derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain
     metadata:
       sid_release: '19.0'
-    
-  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE:
-    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE
-    metadata:
-      sid_release: '19.0'
-    
-  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource:
-    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE
-    metadata:
-      sid_release: '19.0'
-    attributes:
-      status:
-        type: integer
-        description: "This is an enumerated integer whose value indicates the current status of the object. The following values are defined:
-          0: Unknown
-          1: OK
-          2: Initializing
-          3: Starting
-          4: Paused
-          5: Stopping
-          6: Stopped
-          7: Degraded
-          8: Stressed
-          9: Predicted Failure
-          10: Error - General
-          11: Error - Non Recoverable
-          12: Not Installed or Not Present
-          13: In Maintenance
-          14: Unable To Contact
-          15: Lost Communications
-
-          Stopped indicates that the CompoundResource is known to still exist, but it is no longer operational. However, it has not failed.
-
-          Stressed indicates that the LogicalResource is functioning, but needs attention (e.g., it may be overheating, or overloaded in some way). This is similar to Predicted Failure, which indicates that this CompoundResource is functioning properly, but is predicting a failure in the near future.
-
-          In Maintenance indicates that this LogicalResource is being configured, maintained, or otherwise administered and is NOT available for service"
-    interfaces:
-      Standard:
-        type: org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource.status
 
   nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE:
     derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE
@@ -678,119 +596,11 @@ node_types:
     derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE
     metadata:
       sid_release: '19.0'
-    # capabilities:
-    #   connectionPointSpec:
-    #     type: tosca.capabilities.ConnectionPointSpec
-    #   connectionPointSpec2:
-    #     type: tosca.capabilities.ConnectionPointSpec
-
     properties:
       keyWords:
         type: string
         required: false
         description: A list of key words that may help in searches to find an RF spec with desired capabilities
-
-  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.ConnectionPoint:
-    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE
-    metadata:
-      sid_release: '19.0'
-    
-  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource:
-    description: >-
-      Equates to PhysicalResourceSpec in TM Forum Information Model (SID)
-    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE
-    metadata:
-      sid_release: '19.0'
-    # In SID a PhysicalResourceSpec has a 1 : 0..1 relation to PhysicalResourceAttributes
-    # To model this in TOSCA we have these choices:
-    # 1 use capability
-      # We use this option but as noted elsewhere it can only be used for once - we cannot nest capabilities in node in capabilities in nodes and so cannot map one to many relations as found throughout SID
-    # 2 use requirements: - dependency: capability
-      # This places a requirement on node instances derived from this spec that they MUST instantiate a node with the capabilities defined in PhysicalResourceAttributes
-      # which is not what we want
-    # 3 use requirements: - dependency: node
-      # This places a requirement on node instances derived from this spec that they MUST instantiate a node with the type PhysicalResourceAttributes
-      # which is not what we want
-    # 4 Flatten the SID and add the attributes in this node
-      # this validates but
-        # loses the fact that if partNumber is present then vendorName must also be present 
-        # attributes: 
-        #   modelNumber:
-        #     type: string
-        #     required: false
-        #   vendorName:
-        #     type: string
-        #     required: true
-        #   skuNumber:
-        #     type: string
-        #     required: false
-        #   partNumber:
-        #     type: string
-        #   required: true
-    # 5 Make two node definitions, one with and one without the extension
-      # but that doubles the number of child entities
-    # 6 Use capability but to a new intermediate node type
-      # Does not seem to add anything helpful
-    capabilities:
-      PhysicalResourceSpecFurtherExtendedBy:
-        type: tosca.capabilities.PhysicalResourceSpecAttributes
-    
-  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware:
-    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource
-    metadata:
-      sid_release: '19.0'
-
-  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.PhysicalPort:
-    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware
-    metadata:
-      sid_release: '19.0'
-    capabilities:
-      # SID does not define the linkable capability but all tosca ports are linkable
-      link:
-        type: tosca.capabilities.network.Linkable
-   
-  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware:
-    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware
-    metadata:
-      sid_release: '19.0'
-
-  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer:
-    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware
-    metadata:
-      sid_release: '19.0'
-
-  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment:
-    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
-    metadata:
-      sid_release: '19.0'
-
-  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment.Card:
-    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.Equipment
-    metadata:
-      sid_release: '19.0'
-
-  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer.EquipmentHolder:
-    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.PhysicalResource.Hardware.ManagedHardware.PhysicalContainer
-    metadata:
-      sid_release: '19.0'
-
-  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.ComputingandSoftwareABE:
-    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE
-    metadata:
-      sid_release: '19.0'
-
-  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.ComputingandSoftwareABE.SoftwareResourceandSoftwareABE:
-    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.ComputingandSoftwareABE
-    metadata:
-      sid_release: '19.0'
-
-  nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.ComputingandSoftwareABE.SoftwareResourceandSoftwareABE.InstalledSoftware:
-    derived_from: nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.ComputingandSoftwareABE.SoftwareResourceandSoftwareABE
-    metadata:
-      sid_release: '19.0'
-    properties:
-      pagingFileSizeCurrent:
-        type: Quantity
 
   nodes.org.tmforum.models.sidmodels.CommonDomain:
   # added since IG1176 R19.0
@@ -843,7 +653,14 @@ node_types:
       description:
         type: string
         required: false
-
+    # The SID definition for MetricDefinition contains a association to metricDefMeasure
+    requirements:
+      - extension:
+          relationship: 
+            type: MetricDefinitionMeasuredAccordingTo
+        # could set type as sid:NodeIsSupplementedBy if we don't want to use the specific relation name from SID
+        # This would mean that it is no longer necessary to add all the specific names in the sid file
+        # e.g. type: sid:NodeIsSupplementedBy
       # _metricDefMeasure:
       # # The SID definition for MetricDefinition contains a association to metricDefMeasure
       #   metadata:
@@ -984,6 +801,14 @@ A MetricDefMeasureThresholdSet contains either MetricThresholdRuleDefinition ins
         type: integer
         description: The number of allowed crossing occurrences in reference to the tolerancePeriod without a consequence being initiated.
         required: false
+    requirements:
+      - extension:
+          relationship:
+            type: MetricDefMeasureConsequenceDependsOn
+          node: MetricDefMeasureConsequence
+          # Nodes can be extended by more than one supplementary node type as shown in the dummy entry below
+          # relationship2:
+          #   type: nodes.org.tmforum.models.sidmodels.CommonDomain.MetricABE
 
   PreDefinedMetricThresholdRule:
     derived_from: MetricDefMeasureThresholdRule
