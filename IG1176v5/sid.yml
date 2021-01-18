@@ -462,6 +462,15 @@ relationship_types:
   MetricDefMeasureConsequenceDependsOn:
     derived_from: NodeIsSupplementedBy
 
+  MetricMeasureEvaluatedUsing:
+    derived_from: NodeIsSupplementedBy
+
+  MetricMeasureThresholdRuleResultsIn:
+    derived_from: NodeIsSupplementedBy
+
+  MetricDefMeasureConsequenceDescribes:
+    derived_from: NodeIsSupplementedBy
+
 ####################
 node_types:
 ####################
@@ -671,8 +680,14 @@ node_types:
         required: false
     requirements:
       - extension:
-          relationship: MetricDefMeasuredEvaluatedUsing
+          relationship: NodeIsSupplementedBy
           node: MetricDefinitionThresholdSet
+        #where a node requires more than one extension there would be a name clash if the key name 'extension' were used again 
+        # so use the relationship name and declare the capability as it is not inherited
+      - MetricMeasureEvaluatedUsing:
+          capability: NodeSupplement
+          relationship: MetricMeasureEvaluatedUsing
+          node: MetricDefMeasureThresholdRule
 
   MetricDefinitionThresholdSet:
   # added since IG1176 R19.0
@@ -771,3 +786,24 @@ A MetricDefMeasureThresholdSet contains either MetricThresholdRuleDefinition ins
       repeatAction:
         type: boolean
         # plus other properties
+    requirements:
+      - extension:
+          relationship: MetricDefMeasureConsequenceDescribes
+          node: MetricMeasureConsequence
+
+  MetricMeasureThresholdRule:
+    derived_from: nodes.org.tmforum.models.sidmodels.CommonDomain.MetricABE
+    metadata:
+      sid_release: '19.0'
+    # properties
+    requirements:
+      - extension:
+          relationship: MetricMeasureThresholdRuleResultsIn
+          node: MetricMeasureConsequence
+
+  MetricMeasureConsequence:
+    derived_from: nodes.org.tmforum.models.sidmodels.CommonDomain.MetricABE
+    metadata:
+      sid_release: '19.0'
+    # properties
+
