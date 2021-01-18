@@ -810,6 +810,17 @@ A MetricDefMeasureThresholdSet contains either MetricThresholdRuleDefinition ins
     metadata:
       sid_release: '19.0'
     # properties
-
+  
+  ConsequenceMetricNotification:
+    derived_from: nodes.org.tmforum.models.sidmodels.CommonDomain.MetricABE
+    metadata:
+      sid_release: '19.0'
+    # properties
+    interfaces:
+      ConsequenceMetricNotification:
+        description: An interface to hold a notification
+        notifications:
+          ConsequenceMetricNotification:
+            description: A TOSCA notification to map a SID ConsequenceMetricNotification
 
 
