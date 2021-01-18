@@ -731,6 +731,10 @@ A MetricDefMeasureThresholdSet contains either MetricThresholdRuleDefinition ins
           # Note that this is an extension of an abstract class
           relationship: MetricDefMeasureConsequenceDependsOn
           node: MetricDefMeasureConsequence
+      - MetricDefMeasureThresholdDescribes:
+          relationship: MetricDefMeasureConsequenceDescribes
+          node: MetricMeasureConsequence
+          capability: NodeSupplement
 
   MetricThresholdRuleDefinition:
     derived_from: MetricDefMeasureThresholdRule
@@ -806,4 +810,6 @@ A MetricDefMeasureThresholdSet contains either MetricThresholdRuleDefinition ins
     metadata:
       sid_release: '19.0'
     # properties
+
+
 
