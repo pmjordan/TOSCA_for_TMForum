@@ -111,7 +111,7 @@ data_types:
       source: org.tmforum.models.sidmodels.CommonDomain.MetricABE.MetricDefinitionMeasureABE.MetricDefinitionMeasureThresholdABE
       sid_release: '19.0'
     description: "A MetricDefMeasureThresholdSet provides a way to group a set of one or more MetricDefMeasureThresholdRules specifying the condition to evaluate for applying consequences.
-A MetricDefMeasureThresholdSet is used to evaluate one or more MetricDefMesures.
+A MetricDefMeasureThresholdSet is used to evaluate one or more MetricDefMeasures.
 A MetricDefMeasureThresholdSet contains either MetricThresholdRuleDefinition instances or PreDefinedMetricThresholdRule instances."
     properties:
       ID:
