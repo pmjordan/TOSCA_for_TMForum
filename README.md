@@ -1,5 +1,6 @@
 # TOSCA_for_TMForum
-TOSCA examples from ODA-119 in support of IG1176 in the TMForum. See 
+TOSCA examples in support of IG1176 in the TMForum. 
+The most recent updates are for IG1175v5, earlier work as in 
 
 https://projects.tmforum.org/jira/browse/ODA-119 (Login on required)
 and 
@@ -11,4 +12,4 @@ sid.yml contains the SID extentions to TOSCA
 modularRouterProfile.yml contains an generic router profile 
 and acme.yml which contains vendor specific extentions of them.
 
-Also a [TOSCA representation of a firewall](TR255/vFirewall.yml) in for use in TR255C
+Also a [TOSCA representation of a firewall](TR255/vFirewall.yml) in for use in TR255C although that is superceeded by work in IG1176v5
