@@ -1,5 +1,5 @@
 tosca_definitions_version: tosca_simple_yaml_1_3
-description: A TOSCA template to illustrate the node supplement pattern
+description: A TOSCA template to illustrate the node extension pattern
 
 metadata:
   template_name: IG1176 para 
@@ -21,7 +21,7 @@ topology_template:
       type: sid:nodes.org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.LogicalResourceABE.LogicalResource.ResourceFunction
       requirements:
         - extension:
-          # This shows how a deployable node based on ResourceFunction can be related to a supplementary nodes to associate concepts from other branches of the SID
+          # This shows how a deployable node based on ResourceFunction can be related to extension nodes to associate concepts from other branches of the SID
           # Readability is improved by reversing the normal grammar and declaring the relationship before the node
             relationship:
               type: sid:MetricDefinitionMeasures
