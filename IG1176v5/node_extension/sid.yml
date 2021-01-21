@@ -439,6 +439,7 @@ interface_types:
     notifications:
       ConsequenceMetricNotification:
         description: A TOSCA notification to map a SID ConsequenceMetricNotification
+
 ####################
 
 ####################
@@ -474,6 +475,15 @@ relationship_types:
     derived_from: NodeIsExtendedBy
 
   MetricDefMeasureConsequenceDescribes:
+    derived_from: NodeIsExtendedBy
+
+  MetricDefMeasureConsequenceResultsIn:
+    derived_from: NodeIsExtendedBy
+
+  ConsequenceMetricNotificationDescribedBy:
+    derived_from: NodeIsExtendedBy
+
+  MetricMeasureConsequenceResultsIn:
     derived_from: NodeIsExtendedBy
 
 ####################
@@ -816,14 +826,33 @@ A MetricDefMeasureThresholdSet contains either MetricThresholdRuleDefinition ins
       sid_release: '19.0'
     # properties
   
+
+  ConsequenceMetricNotificationSpec:
+    derived_from: nodes.org.tmforum.models.sidmodels.CommonDomain.MetricABE.MetricDefinitionMeasureABE
+    metadata:
+      sid_release: '19.0'
+    requirements:
+      - extension:
+          relationship: ConsequenceMetricNotificationDescribedBy
+          node: ConsequenceMetricNotificationSpec
+      - _metricMeasureConsequence:
+          relationship: MetricDefMeasureConsequenceResultsIn
+          node: ConsequenceMetricNotificationSpec
+          capability: NodeExtension
+  
   ConsequenceMetricNotification:
     derived_from: nodes.org.tmforum.models.sidmodels.CommonDomain.MetricABE
     metadata:
       sid_release: '19.0'
-    # properties
+    requirements:
+      - extension:
+          relationship: ConsequenceMetricNotificationDescribedBy
+          node: ConsequenceMetricNotificationSpec
+      - _metricMeasureConsequence:
+          relationship: MetricMeasureConsequenceResultsIn
+          node: ConsequenceMetricNotification
+          capability: NodeExtension
     interfaces:
       ConsequenceMetricNotification:
         type: org.tmforum.models.sidmodels.CommonDomain.MetricABE.MetricMeasureABE.ConsequenceMetricNotification
-
-
 
