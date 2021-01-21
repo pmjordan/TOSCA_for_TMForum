@@ -167,7 +167,7 @@ A MetricDefMeasureThresholdSet contains either MetricThresholdRuleDefinition ins
         required: false
       # _metricDefMeasure:
       # # The SID definition for MetricDefinition contains a association to metricDefMeasure
-      # This might be modelled using a map with an entry_schema: MetricDefMeasure but doing so does not work well for abstract classes. Better to use teh node supplement pattern.
+      # This might be modelled using a map with an entry_schema: MetricDefMeasure but doing so does not work well for abstract classes. Better to use the node extension pattern.
 
   MetricThresholdRuleDefinition:
     metadata:
@@ -279,8 +279,8 @@ A MetricDefMeasureThresholdSet contains either MetricThresholdRuleDefinition ins
 capability_types:
 ####################
 
-  NodeSupplement:
-    description: A marker to discriminate Supplementary Nodes from Deployable Nodes
+  NodeExtension:
+    description: A marker to discriminate Extension Nodes
     derived_from: tosca.capabilities.Root
 
   ##################
@@ -388,7 +388,6 @@ interface_types:
       set_Lost_Communications:
           description: '15: Lost Communications'
 
-
   org.tmforum.models.sidmodels.ResourceDomain.ResourceABE.CompoundResourceABE.CompoundResource.status:
     #derived_from: tosca.interfaces.node.lifecycle.Standard
     metadata:
@@ -434,42 +433,48 @@ interface_types:
           description: '14: Unable To Contact'
       set_Lost_Communications:
           description: '15: Lost Communications'
+
+  org.tmforum.models.sidmodels.CommonDomain.MetricABE.MetricMeasureABE.ConsequenceMetricNotification:
+    description: An interface to hold a ConsequenceMetricNotification for use in the node extension pattern
+    notifications:
+      ConsequenceMetricNotification:
+        description: A TOSCA notification to map a SID ConsequenceMetricNotification
 ####################
 
 ####################
 relationship_types:
 ####################
-  NodeIsSupplementedBy:
+  NodeIsExtendedBy:
     derived_from: tosca.relationships.Root
-    description: Allows deployable nodes to be enhanced with information contained in supplementary nodes
-    valid_target_types: [ NodeSupplement ]
+    description: Allows deployable nodes to be enhanced with information contained in extension nodes
+    valid_target_types: [ NodeExtension ]
 
   MetricDefinitionMeasures:
-    derived_from: NodeIsSupplementedBy
+    derived_from: NodeIsExtendedBy
 
   MetricDefinitionMeasuredAccordingTo:
-    derived_from: NodeIsSupplementedBy
+    derived_from: NodeIsExtendedBy
 
   MetricDefMeasuredEvaluatedUsing:
-    derived_from: NodeIsSupplementedBy
+    derived_from: NodeIsExtendedBy
 
   MetricDefMeasuredThresholdSetContains:
-    derived_from: NodeIsSupplementedBy
+    derived_from: NodeIsExtendedBy
 
   MetricThresholdRuleDefinition:
-    derived_from: NodeIsSupplementedBy
+    derived_from: NodeIsExtendedBy
 
   MetricDefMeasureConsequenceDependsOn:
-    derived_from: NodeIsSupplementedBy
+    derived_from: NodeIsExtendedBy
 
   MetricMeasureEvaluatedUsing:
-    derived_from: NodeIsSupplementedBy
+    derived_from: NodeIsExtendedBy
 
   MetricMeasureThresholdRuleResultsIn:
-    derived_from: NodeIsSupplementedBy
+    derived_from: NodeIsExtendedBy
 
   MetricDefMeasureConsequenceDescribes:
-    derived_from: NodeIsSupplementedBy
+    derived_from: NodeIsExtendedBy
 
 ####################
 node_types:
@@ -517,9 +522,9 @@ node_types:
           relationship: tosca.relationships.DependsOn
           occurrences: [ 0, UNBOUNDED ]
       - extension:
-          capability: NodeSupplement
+          capability: NodeExtension
           node: nodes.org.tmforum.models.sidmodels
-          relationship: NodeIsSupplementedBy
+          relationship: NodeIsExtendedBy
           occurrences: [ 0, UNBOUNDED ]
       
   nodes.org.tmforum.models.sidmodels.ResourceDomain:
@@ -594,8 +599,8 @@ node_types:
     metadata:
       sid_release: '19.0'
     capabilities:
-      NodeSupplement:
-        type: NodeSupplement
+      NodeExtension:
+        type: NodeExtension
 
   nodes.org.tmforum.models.sidmodels.CommonDomain.MetricABE.MetricDefinitionABE:
     derived_from: nodes.org.tmforum.models.sidmodels.CommonDomain
@@ -635,8 +640,8 @@ node_types:
         type: string
         required: false
     # The SID definition for MetricDefinition contains a association to _metricDefMeasure
-    # We represent it here using the supplementary node pattern
-    # The name for the relationship is the specific one from SID but functionally it is no different to the TOSCA relationship NodeIsSupplementedBy
+    # We represent it here using the node extension pattern
+    # The name for the relationship is the specific one from SID but functionally it is no different to the TOSCA relationship NodeIsExtendedBy
     requirements:
       - extension:
           relationship: MetricDefinitionMeasuredAccordingTo
@@ -680,12 +685,12 @@ node_types:
         required: false
     requirements:
       - extension:
-          relationship: NodeIsSupplementedBy
+          relationship: NodeIsExtendedBy
           node: MetricDefinitionThresholdSet
         #where a node requires more than one extension there would be a name clash if the key name 'extension' were used again 
         # so use the relationship name and declare the capability as it is not inherited
       - MetricMeasureEvaluatedUsing:
-          capability: NodeSupplement
+          capability: NodeExtension
           relationship: MetricMeasureEvaluatedUsing
           node: MetricDefMeasureThresholdRule
 
@@ -734,7 +739,7 @@ A MetricDefMeasureThresholdSet contains either MetricThresholdRuleDefinition ins
       - MetricDefMeasureThresholdDescribes:
           relationship: MetricDefMeasureConsequenceDescribes
           node: MetricMeasureConsequence
-          capability: NodeSupplement
+          capability: NodeExtension
 
   MetricThresholdRuleDefinition:
     derived_from: MetricDefMeasureThresholdRule
@@ -818,9 +823,7 @@ A MetricDefMeasureThresholdSet contains either MetricThresholdRuleDefinition ins
     # properties
     interfaces:
       ConsequenceMetricNotification:
-        description: An interface to hold a notification
-        notifications:
-          ConsequenceMetricNotification:
-            description: A TOSCA notification to map a SID ConsequenceMetricNotification
+        type: org.tmforum.models.sidmodels.CommonDomain.MetricABE.MetricMeasureABE.ConsequenceMetricNotification
+
 
 

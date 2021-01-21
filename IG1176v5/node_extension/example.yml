@@ -6,7 +6,7 @@ metadata:
   template_author: paul.m.jordan@bt.com
   template_version: '5.0'
   # This field is for convenience 
-  parse_command: puccini-tosca --quirk data_types.timestamp.permissive parse "example.yml" > out.yml
+  parse_command: puccini-tosca --quirk data_types.timestamp.permissive parse "example.yml" > /dev/null
   # the quirk in the above command tells puccini to allow timestamps in yaml format as used by sid.yml
 
 imports:
